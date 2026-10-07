@@ -1,0 +1,18 @@
+{
+  "name": "ancla-frontend",
+  "version": "1.0.0",
+  "description": "ANCLA - Sistema de Monitoreo Temprano y Permanencia Estudiantil (Facultad de Ingenierías, Universidad de Medellín)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "ancla",
+    "permanencia-estudiantil",
+    "monitoreo-temprano",
+    "udemellin"
+  ],
+  "author": "Facultad de Ingenierías - Universidad de Medellín",
+  "license": "ISC"
+}

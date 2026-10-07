@@ -15,86 +15,76 @@
 
 ---
 
-## 🎨 Paleta de Color Institucional
-El diseño visual está fundamentado en una estética técnica, sobria y de alto contraste:
-* **Grises Oscuros:** `#0b0c0e` (fondo base), `#111317` (sidebar/headers), `#171a21` (tarjetas), `#2f3545` (bordes estructurales).
-* **Blanco Puro:** `#ffffff` (títulos de impacto, cifras principales y textos de alto contraste) y `#f2f4f8` (texto de lectura).
-* **Rojo Ancla:** `#e63946` (acento primario de identidad), `#ff4d5b` (hover y acentos vivos), `#9e1422` (alertas críticas y contrastes).
+## 🏛️ Arquitectura Modular del Proyecto
 
----
-
-## 📍 ¿Dónde colocar el Logo Oficial?
-El proyecto incluye un logo vectorial moderno predeterminado en `assets/logo.svg`.
-Para utilizar el logo oficial de la institución o del equipo:
-
-1. **Ubicación del archivo:**  
-   Guarda tu imagen de logo en la carpeta `assets/` (por ejemplo: `assets/logo-ancla.png` o `assets/logo-ancla.svg`).
-2. **Ubicación en el código (`index.html`):**  
-   En la cabecera del menú lateral (`.sidebar-logo-area`), dentro del contenedor `.logo-badge` (alrededor de la línea 26):
-   ```html
-   <!-- CONTENEDOR DEL LOGO PRINCIPAL -->
-   <div class="logo-badge" title="Logo Oficial del Sistema ANCLA">
-     <img src="assets/logo.svg" alt="Logo Ancla" id="mainAppLogo">
-   </div>
-   ```
-   También puedes actualizar el `favicon` en la línea 7 de `index.html`:
-   ```html
-   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
-   ```
-
----
-
-## 🏛️ Arquitectura del Frontend (Tres Capas y Monolito Modular)
+El proyecto está organizado de manera modular y escalable, dividiendo las vistas, la lógica de negocio y los servicios centrales para facilitar el mantenimiento y la demostración ante clientes o directivas:
 
 ```
 Ancla/
 │
-├── index.html                   # Capa de Presentación (HTML5 Semántico y Accesible)
+├── index.html                   # Launcher institucional y enrutador inteligente de inicio
+├── server.js                    # Servidor local HTTP nativo (localhost:3000, 0 dependencias)
+├── package.json                 # Configuración de arranque con npm start
 ├── README.md                    # Documentación del proyecto
 │
 ├── assets/
-│   └── logo.svg                 # Logo oficial vectorial (Ancla geométrica con acento rojo)
+│   └── logo.svg                 # Logo oficial vectorial de ANCLA
 │
 ├── css/
-│   └── styles.css               # Sistema de diseño, variables CSS, temas oscuro y componentes
+│   └── styles.css               # Sistema de diseño, variables, paleta visual y componentes
+│
+├── views/                       # Vistas divididas e independientes por rol de usuario
+│   ├── directivo.html           # Dashboard Directivo (KPIs, distribución de riesgo, simulador ROI)
+│   ├── tutor.html               # Bandeja de Pre-Alertas (supervisión humana, filtros, padrón)
+│   └── estudiante.html          # Portal del Estudiante (encuesta Typeform, materias, privacidad)
 │
 └── js/
-    ├── data.js                  # Semilla de datos estructurados (Estudiantes, Percepciones, Roles)
-    ├── rulesEngine.js           # Capa de Lógica: Motor determinista por umbrales (HU05)
-    ├── financialSimulator.js    # Capa de Lógica: Modelo financiero y simulador de ROI (HU09, HU10)
-    ├── apiService.js            # Capa de Comunicación: Endpoints listos para conectar Backend / BD
-    └── app.js                   # Controlador interactivo, gestión de eventos y vistas por rol
+    ├── shared.js                # Lógica compartida (navegación, selector de rol, modales, toasts)
+    │
+    ├── core/                    # Capa central de datos y motores de cálculo
+    │   ├── data.js              # Semilla de datos estructurados y persistencia localStorage
+    │   ├── rulesEngine.js       # Motor determinista de reglas por umbrales (HU05)
+    │   ├── financialSimulator.js# Motor de cálculo financiero de retención y ROI (HU09, HU10)
+    │   └── apiService.js        # Capa de servicio preparada para backend REST / Base de datos
+    │
+    └── modules/                 # Controladores específicos de cada dashboard
+        ├── directivo.js         # Lógica interactiva del panel directivo y simulador
+        ├── tutor.js             # Lógica interactiva de alertas y validación/descarte
+        └── estudiante.js        # Lógica interactiva de la encuesta Typeform y consentimiento
 ```
 
 ---
 
-## 🚀 Funcionalidades Clave del Prototipo Frontend
+## 🚀 ¿Cómo ejecutar el proyecto?
 
-### 1. Control de Acceso y Vistas por Rol (HU02)
-Permite alternar interactivamente entre los 3 actores principales mediante el menú desplegable en la barra lateral:
-* **🎓 Estudiante:**
-  * **Consentimiento Informado (HU01):** Banner transparente con opción de aceptar o revocar el tratamiento de datos socioemocionales.
-  * **Encuesta de Bienestar Typeform (HU04):** Flujo ágil de micro-preguntas (1 por pantalla) para medir estado anímico, sobrecarga académica y estrés con escalas intuitivas y emojis.
-  * **Resumen Académico (HU03):** Visualización no punitiva de notas y asistencia porcentual.
-* **🛡️ Tutor / Profesional de Bienestar:**
-  * **Bandeja de Pre-Alertas (HU06, HU08):** Lista filtrable de casos detectados automáticamente por el motor de reglas.
-  * **Validación Humana Obligatoria (HU06):** Modal interactivo para inspeccionar la traza causal, ingresar notas de acompañamiento y **confirmar la alerta** o **descartarla como falso positivo**.
-  * **Monitoreo Integral:** Padrón consolidado de estudiantes con métricas cruzadas (cuantitativas + cualitativas).
-* **📊 Directivo / Coordinador Académico:**
-  * **Dashboard de Indicadores (HU07):** KPIs agregados de permanencia, estudiantes en riesgo y distribución por nivel (Crítico, Alto, Medio, Bajo).
-  * **Simulador Financiero de Retención (HU09, HU10):** 5 controles deslizantes (sliders) interactivos que recalculan en tiempo real:
-    * Retorno sobre la Inversión (**ROI %**).
-    * Estudiantes retenidos al año.
-    * Ingresos por matrículas preservadas (**$ COP**).
-    * Pérdida anual evitada vs. costo operativo del sistema SaaS.
+### Opción 1: Servidor Local (Recomendado para la presentación)
+Puedes ejecutar el servidor localhost nativo de Node.js (no requiere instalar dependencias adicionales):
+
+```bash
+npm start
+```
+O directamente:
+```bash
+node server.js
+```
+
+El servidor quedará disponible en:
+👉 **`http://localhost:3000`**
+
+Rutas directas amigables:
+* 📊 **Directivo:** `http://localhost:3000/directivo`
+* 🛡️ **Tutor / Bienestar:** `http://localhost:3000/tutor`
+* 🎓 **Estudiante:** `http://localhost:3000/estudiante`
+
+### Opción 2: Sin servidor (Doble clic)
+El proyecto también funciona abriendo directamente cualquier archivo `.html` en tu navegador (`index.html` o los archivos dentro de `views/`), ya que utiliza rutas relativas universales y almacenamiento en `localStorage`.
 
 ---
 
-## 🔌 Preparación para Conexión con Backend y Base de Datos
-El archivo `js/apiService.js` implementa funciones asíncronas (`async/await`) listas para producción. Cuando se construya la API REST (Node.js/Express, Python/FastAPI, Spring Boot, etc.), simplemente se descomentan las líneas `fetch(BASE_URL + ...)` señalizadas dentro del archivo.
+## 🔄 Conexión y Sincronización entre Dashboards
 
----
-
-## 💻 ¿Cómo abrir y visualizar el prototipo?
-Basta con abrir el archivo `index.html` en cualquier navegador web moderno (Google Chrome, Microsoft Edge, Firefox, Safari).  
-No requiere dependencias externas ni compiladores complejos.
+Todos los dashboards están interconectados en tiempo real a través del almacén compartido de datos:
+1. **Selector de Rol en el Sidebar:** En cualquier dashboard puedes usar el menú desplegable para cambiar entre Directivo, Tutor y Estudiante; la interfaz navegará automáticamente a la vista correspondiente.
+2. **Sincronización de Datos:**
+   * Si el **Tutor** valida o descarta una pre-alerta como "Falso Positivo" en su bandeja, al pasar a la vista de **Directivo** los KPIs y la distribución de riesgo se actualizan inmediatamente.
+   * Si el **Estudiante** completa su encuesta de bienestar, el motor de reglas re-evalúa sus indicadores y las nuevas alertas se reflejan al instante en la bandeja del **Tutor**.

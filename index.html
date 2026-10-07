@@ -9,538 +9,185 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <style>
+    .launcher-container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      background: radial-gradient(circle at 50% 20%, rgba(230, 57, 70, 0.12) 0%, var(--bg-deep) 70%);
+    }
+    .launcher-header {
+      text-align: center;
+      margin-bottom: 40px;
+      max-width: 620px;
+    }
+    .launcher-logo-badge {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 25px var(--red-glow);
+    }
+    .launcher-logo-badge img {
+      width: 48px;
+      height: 48px;
+    }
+    .launcher-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-white);
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .launcher-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .launcher-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(240px, 300px));
+      gap: 22px;
+      max-width: 960px;
+      width: 100%;
+    }
+    .launcher-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 26px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      text-decoration: none;
+      transition: var(--transition);
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+    }
+    .launcher-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: transparent;
+      transition: var(--transition);
+    }
+    .launcher-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-focus);
+      background: var(--bg-card-hover);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    }
+    .launcher-card:hover::before {
+      background: var(--red-primary);
+    }
+    .launcher-card-icon {
+      font-size: 2.4rem;
+      margin-bottom: 14px;
+    }
+    .launcher-card-role {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-white);
+      margin-bottom: 6px;
+    }
+    .launcher-card-desc {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 18px;
+      flex: 1;
+    }
+    .launcher-card-btn {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--red-hover);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .launcher-footer {
+      margin-top: 40px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    @media (max-width: 820px) {
+      .launcher-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <div class="app-container">
-
-    <!-- ===================================================================
-         SIDEBAR / NAVEGACIÓN LATERAL
-         =================================================================== -->
-    <aside class="sidebar">
-
-      <!-- ===============================================================
-           UBICACIÓN DEL LOGO (INDICACIÓN CLAVE)
-           Aquí se ubica el logo principal del proyecto ANCLA.
-           Puedes reemplazar el SVG de assets/logo.svg por tu imagen en png/svg:
-           <img src="assets/logo.png" alt="Logo Ancla" />
-           =============================================================== -->
-      <div class="sidebar-logo-area">
-        <!-- CONTENEDOR DEL LOGO INSTITUCIONAL -->
-        <div class="logo-badge" title="Logo Oficial del Sistema ANCLA">
-          <!-- LOGO DEL PROYECTO: Reemplazar el archivo assets/logo.svg o apuntar a tu logo oficial -->
-          <img src="assets/logo.svg" alt="Logo de Ancla" id="mainAppLogo">
-        </div>
-        <div class="logo-info">
-          <div class="logo-title">
-            <span>ANCLA</span><span class="brand-red">.</span>
-            <span class="logo-tag">v1.0</span>
-          </div>
-          <span class="logo-subtitle">Facultad de Ingenierías</span>
-        </div>
+  <div class="launcher-container">
+    <div class="launcher-header">
+      <div class="launcher-logo-badge">
+        <img src="assets/logo.svg" alt="Logo de Ancla">
       </div>
+      <h1 class="launcher-title">ANCLA<span style="color: var(--red-primary);">.</span></h1>
+      <p class="launcher-subtitle">
+        Sistema de Monitoreo Temprano, Análisis y Alerta para la Permanencia Estudiantil<br>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">Facultad de Ingenierías • Universidad de Medellín</span>
+      </p>
+    </div>
 
-      <!-- SELECTOR DE ROL DE USUARIO (HU02: Control de Acceso por Roles) -->
-      <div class="role-switcher-box">
-        <div class="role-label-tag">
-          <span>Vista de Usuario</span>
-          <span style="color: var(--red-hover);">Cambiar Rol</span>
+    <div class="launcher-grid">
+      <!-- Tarjeta 1: Directivo -->
+      <a href="views/directivo.html" class="launcher-card" onclick="localStorage.setItem('ancla_current_role', 'directivo')">
+        <div class="launcher-card-icon">📊</div>
+        <div class="launcher-card-role">Directivo / Decanatura</div>
+        <div class="launcher-card-desc">
+          Dashboard ejecutivo de indicadores, distribución de riesgo, padrón de estudiantes y simulador financiero ROI.
         </div>
-        <select id="roleSelect" class="role-select">
-          <option value="directivo">📊 Directivo / Coordinador</option>
-          <option value="tutor">🛡️ Tutor / Bienestar</option>
-          <option value="estudiante">🎓 Estudiante</option>
-        </select>
-      </div>
+        <div class="launcher-card-btn">Ingresar al Panel →</div>
+      </a>
 
-      <!-- MENÚ DE NAVEGACIÓN MODULAR -->
-      <nav class="sidebar-nav">
-        <div class="nav-section-title">Módulos del Sistema</div>
-
-        <!-- Opciones para Directivo -->
-        <a href="#dashboard" class="nav-link active" data-view="view-executive" data-roles="directivo">
-          <span class="nav-icon">📈</span>
-          <span>Dashboard General</span>
-        </a>
-        <a href="#financiero" class="nav-link" data-view="view-financial" data-roles="directivo">
-          <span class="nav-icon">💰</span>
-          <span>Simulador ROI</span>
-        </a>
-
-        <!-- Opciones para Tutor / Bienestar -->
-        <a href="#prealertas" class="nav-link" data-view="view-tutor" data-roles="tutor">
-          <span class="nav-icon">🚨</span>
-          <span>Bandeja Pre-Alertas</span>
-          <span class="nav-badge" id="pendingAlertsCountBadge">2</span>
-        </a>
-        <a href="#estudiantes" class="nav-link" data-view="view-students-table" data-roles="tutor,directivo">
-          <span class="nav-icon">👥</span>
-          <span>Estudiantes en Monitoreo</span>
-        </a>
-
-        <!-- Opciones para Estudiante -->
-        <a href="#bienestar" class="nav-link" data-view="view-student" data-roles="estudiante">
-          <span class="nav-icon">❤️</span>
-          <span>Mi Encuesta de Bienestar</span>
-        </a>
-
-        <div class="nav-section-title" style="margin-top: 14px;">Garantías & Ética</div>
-        <a href="#" class="nav-link" id="btnOpenPrivacyModal">
-          <span class="nav-icon">🔒</span>
-          <span>Privacidad & Datos</span>
-        </a>
-      </nav>
-
-      <!-- PERFIL DE USUARIO EN SESIÓN -->
-      <div class="sidebar-footer">
-        <div class="user-avatar" id="sidebarUserAvatar">RR</div>
-        <div class="user-meta">
-          <div class="user-name" id="sidebarUserName">Ing. Roberto Restrepo</div>
-          <div class="user-role-badge" id="sidebarUserRole">Directivo / Decanatura</div>
+      <!-- Tarjeta 2: Tutor -->
+      <a href="views/tutor.html" class="launcher-card" onclick="localStorage.setItem('ancla_current_role', 'tutor')">
+        <div class="launcher-card-icon">🛡️</div>
+        <div class="launcher-card-role">Tutor / Bienestar</div>
+        <div class="launcher-card-desc">
+          Bandeja de pre-alertas tempranas con supervisión humana obligatoria, filtro por estados y padrón de consejería.
         </div>
-      </div>
-    </aside>
+        <div class="launcher-card-btn">Ingresar a Bandeja →</div>
+      </a>
 
-    <!-- ===================================================================
-         CONTENIDO PRINCIPAL Y VISTAS
-         =================================================================== -->
-    <main class="main-content">
-
-      <!-- TOPBAR SUPERIOR -->
-      <header class="topbar">
-        <div class="topbar-left">
-          <h1 class="page-title" id="pageTitle">Panel Directivo y Métricas de Permanencia</h1>
-          <span class="context-tag">Universidad de Medellín • 2026-2</span>
+      <!-- Tarjeta 3: Estudiante -->
+      <a href="views/estudiante.html" class="launcher-card" onclick="localStorage.setItem('ancla_current_role', 'estudiante')">
+        <div class="launcher-card-icon">🎓</div>
+        <div class="launcher-card-role">Portal Estudiante</div>
+        <div class="launcher-card-desc">
+          Seguimiento de notas y asistencias, consentimiento ético de datos y encuesta de bienestar interactiva Typeform.
         </div>
-      </header>
+        <div class="launcher-card-btn">Ingresar al Portal →</div>
+      </a>
+    </div>
 
-      <!-- CONTENEDOR DE VISTAS DINÁMICAS -->
-      <div class="views-container">
-
-        <!-- =============================================================
-             VISTA 1: DIRECTIVO / DASHBOARD DE INDICADORES (HU07)
-             ============================================================= -->
-        <section id="view-executive" class="view-section active">
-          
-          <!-- KPIs Clave -->
-          <div class="kpi-grid">
-            <div class="kpi-card">
-              <div class="kpi-title">Estudiantes Monitoreados</div>
-              <div class="kpi-value" id="kpiTotalMonitored">1,250</div>
-              <div class="kpi-detail">Facultad de Ingenierías (1° a 3° sem)</div>
-            </div>
-
-            <div class="kpi-card" style="border-left-color: var(--red-primary);">
-              <div class="kpi-title">En Riesgo de Deserción</div>
-              <div class="kpi-value" style="color: var(--red-hover);" id="kpiAtRisk">3</div>
-              <div class="kpi-detail"><span class="kpi-badge-trend danger">▲ Crítico / Alto</span> Señales de alerta temprana</div>
-            </div>
-
-            <div class="kpi-card">
-              <div class="kpi-title">Pre-Alertas Pendientes</div>
-              <div class="kpi-value" id="kpiPendingAlerts">2</div>
-              <div class="kpi-detail">Requieren validación humana del tutor</div>
-            </div>
-
-            <div class="kpi-card">
-              <div class="kpi-title">Asistencia Promedio</div>
-              <div class="kpi-value" id="kpiAvgAttendance">83%</div>
-              <div class="kpi-detail">Umbral institucional mínimo: 80%</div>
-            </div>
-
-            <div class="kpi-card">
-              <div class="kpi-title">Promedio Ponderado General</div>
-              <div class="kpi-value" id="kpiAvgGPA">3.4</div>
-              <div class="kpi-detail">Escala de 0.0 a 5.0</div>
-            </div>
-          </div>
-
-          <!-- Distribución de Riesgo & Factores -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
-            <div class="card">
-              <div class="card-header">
-                <div>
-                  <h3 class="card-title"><span class="card-title-icon">📊</span> Distribución por Nivel de Riesgo</h3>
-                  <div class="card-subtitle">Clasificación mediante motor determinista de umbrales</div>
-                </div>
-              </div>
-              <div class="finance-breakdown-list">
-                <div class="finance-item">
-                  <span style="color: var(--red-hover); font-weight: 600;">🚨 Riesgo Crítico (&lt; 75% asist. + sobrecarga)</span>
-                  <span class="badge-risk critico" id="distCritico">1 casos</span>
-                </div>
-                <div class="finance-item">
-                  <span style="color: #ff7675; font-weight: 600;">⚠️ Riesgo Alto (Promedio &lt; 3.0 + estrés)</span>
-                  <span class="badge-risk alto" id="distAlto">2 casos</span>
-                </div>
-                <div class="finance-item">
-                  <span style="color: #ffa502; font-weight: 600;">🟡 Riesgo Medio (Observación preventiva)</span>
-                  <span class="badge-risk medio" id="distMedio">1 casos</span>
-                </div>
-                <div class="finance-item">
-                  <span style="color: #55efc4; font-weight: 600;">🟢 Riesgo Bajo (Evolución favorable)</span>
-                  <span class="badge-risk bajo" id="distBajo">2 casos</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-header">
-                <div>
-                  <h3 class="card-title"><span class="card-title-icon">🛡️</span> Pilares de Prevención Ancla</h3>
-                  <div class="card-subtitle">Enfoque formativo, ético y no sancionador</div>
-                </div>
-              </div>
-              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 14px;">
-                Ancla integra los datos cuantitativos institucionales (notas y asistencias) con el pulso emocional del estudiante, erradicando modelos punitivos y cajas negras.
-              </p>
-              <div class="finance-breakdown-list">
-                <div class="finance-item">
-                  <span>Validación Humana Obligatoria</span>
-                  <span style="color: var(--status-low);">✓ Cero Falsos Positivos</span>
-                </div>
-                <div class="finance-item">
-                  <span>Modelo de Encuesta Typeform</span>
-                  <span style="color: var(--text-white);">1 Pregunta / Micro-pulsos</span>
-                </div>
-                <div class="finance-item">
-                  <span>Gestión Financiera & Sostenibilidad</span>
-                  <span style="color: var(--red-hover);">SaaS & Retorno de Inversión</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- =============================================================
-             VISTA 2: SIMULADOR FINANCIERO Y RETORNO DE INVERSIÓN (HU09, HU10)
-             ============================================================= -->
-        <section id="view-financial" class="view-section">
-          <div class="card">
-            <div class="card-header">
-              <div>
-                <h2 class="card-title"><span class="card-title-icon">💰</span> Simulador de Impacto Económico y Retención</h2>
-                <div class="card-subtitle">
-                  Visualiza el retorno de la inversión (ROI) y los beneficios financieros para la Facultad de Ingenierías derivados de la retención estudiantil.
-                </div>
-              </div>
-            </div>
-
-            <div class="simulator-grid">
-              <!-- Controles / Sliders de Parámetros -->
-              <div style="background: var(--bg-deep); padding: 22px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-                <h4 style="font-size: 0.9rem; color: var(--text-white); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.8px;">
-                  Parámetros del Reto Institucional
-                </h4>
-
-                <!-- Slider 1: Total Estudiantes -->
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Estudiantes en Primeros Semestres:</span>
-                    <span class="control-value-badge" id="valSimStudents">1,250</span>
-                  </div>
-                  <input type="range" id="simStudents" class="range-slider" min="500" max="3000" step="50" value="1250">
-                </div>
-
-                <!-- Slider 2: Deserción Histórica -->
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Tasa de Deserción Histórica (%):</span>
-                    <span class="control-value-badge" id="valSimDropoutRate">16.5%</span>
-                  </div>
-                  <input type="range" id="simDropoutRate" class="range-slider" min="5" max="30" step="0.5" value="16.5">
-                </div>
-
-                <!-- Slider 3: Valor de Matrícula -->
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Valor Matrícula Semestral (COP):</span>
-                    <span class="control-value-badge" id="valSimTuition">$ 6.800.000</span>
-                  </div>
-                  <input type="range" id="simTuition" class="range-slider" min="3000000" max="12000000" step="200000" value="6800000">
-                </div>
-
-                <!-- Slider 4: Eficacia de Retención con Ancla -->
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Retención Efectiva con Ancla (% éxito):</span>
-                    <span class="control-value-badge" id="valSimRetentionRate">30%</span>
-                  </div>
-                  <input type="range" id="simRetentionRate" class="range-slider" min="10" max="70" step="5" value="30">
-                </div>
-
-                <!-- Slider 5: Costo Operativo Anual de la Solución (HU09) -->
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Costo Operativo Anual Ancla (SaaS / Servidores):</span>
-                    <span class="control-value-badge" id="valSimPlatformCost">$ 42.000.000</span>
-                  </div>
-                  <input type="range" id="simPlatformCost" class="range-slider" min="20000000" max="80000000" step="2000000" value="42000000">
-                </div>
-              </div>
-
-              <!-- Resultados Calculados en Tiempo Real -->
-              <div>
-                <div class="roi-card-highlight">
-                  <h3>Retorno Estimado sobre la Inversión (ROI)</h3>
-                  <div class="roi-big-number" id="resRoiPercentage">1,907%</div>
-                  <span style="font-size: 0.8rem; color: var(--text-secondary);">Beneficio económico altamente viable para la institución</span>
-                </div>
-
-                <div class="finance-breakdown-list">
-                  <div class="finance-item">
-                    <span>Estudiantes Retenidos / Rescatados al Año:</span>
-                    <span id="resRetainedStudents" style="color: var(--status-low); font-size: 1rem;">62 estudiantes</span>
-                  </div>
-                  <div class="finance-item">
-                    <span>Ingresos por Matrículas Preservadas (Año):</span>
-                    <span id="resRevenuePreserved" style="color: var(--text-white);">$ 843.200.000</span>
-                  </div>
-                  <div class="finance-item">
-                    <span>Pérdida Anual Evitada sin Intervención:</span>
-                    <span id="resAnnualLoss" style="color: var(--red-hover);">$ 2.801.600.000</span>
-                  </div>
-                  <div class="finance-item">
-                    <span>Beneficio Neto para la Universidad:</span>
-                    <span id="resNetBenefit" style="color: var(--status-low);">$ 801.200.000</span>
-                  </div>
-                  <div class="finance-item">
-                    <span>Costo por Estudiante Rescatado:</span>
-                    <span id="resCostPerRetained">$ 677.419</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- =============================================================
-             VISTA 3: TUTOR / BANDEJA DE PRE-ALERTAS (HU05, HU06, HU08)
-             ============================================================= -->
-        <section id="view-tutor" class="view-section">
-          <div class="card">
-            <div class="card-header">
-              <div>
-                <h2 class="card-title"><span class="card-title-icon">🚨</span> Bandeja de Pre-Alertas Tempranas</h2>
-                <div class="card-subtitle">
-                  Flujo de Supervisión Humana Obligatoria: El sistema nunca penaliza de forma automática; el tutor confirma o descarta antes de formalizar el acompañamiento.
-                </div>
-              </div>
-              <!-- Filtros de Alertas -->
-              <div style="display: flex; gap: 8px;">
-                <button class="btn btn-secondary btn-sm alert-filter-btn active" data-filter="all">Todas</button>
-                <button class="btn btn-secondary btn-sm alert-filter-btn" data-filter="pending">Pendientes</button>
-                <button class="btn btn-secondary btn-sm alert-filter-btn" data-filter="validated">Validadas</button>
-                <button class="btn btn-secondary btn-sm alert-filter-btn" data-filter="dismissed">Descartadas</button>
-              </div>
-            </div>
-
-            <!-- Tabla de Pre-Alertas -->
-            <div class="data-table-container">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Estudiante</th>
-                    <th>Nivel de Riesgo</th>
-                    <th>Regla Disparada</th>
-                    <th>Estado Supervisión</th>
-                    <th>Observación del Tutor</th>
-                    <th style="text-align: right;">Acción Humana</th>
-                  </tr>
-                </thead>
-                <tbody id="tutorAlertsTableBody">
-                  <!-- Se genera dinámicamente con JavaScript -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- =============================================================
-             VISTA 4: MONITOREO GENERAL DE ESTUDIANTES (HU03)
-             ============================================================= -->
-        <section id="view-students-table" class="view-section">
-          <div class="card">
-            <div class="card-header">
-              <div>
-                <h2 class="card-title"><span class="card-title-icon">👥</span> Padrón de Estudiantes Monitoreados</h2>
-                <div class="card-subtitle">Seguimiento consolidado de notas, asistencias y estado perceptual</div>
-              </div>
-            </div>
-
-            <div class="data-table-container">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Estudiante</th>
-                    <th>Promedio Ponderado</th>
-                    <th>% Asistencia</th>
-                    <th>Percepciones (Estrés / Carga)</th>
-                    <th>Estado Global</th>
-                  </tr>
-                </thead>
-                <tbody id="allStudentsTableBody">
-                  <!-- Se genera dinámicamente con JavaScript -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- =============================================================
-             VISTA 5: ESTUDIANTE / PORTAL Y ENCUESTA TYPEFORM (HU01, HU04)
-             ============================================================= -->
-        <section id="view-student" class="view-section">
-          
-          <!-- Banner de Consentimiento y Privacidad (HU01) -->
-          <div class="banner-consent" id="studentConsentBanner">
-            <div class="consent-text">
-              <h4>🔒 Política de Privacidad y Tratamiento de Datos Formativos</h4>
-              <p id="consentStatusText">Tus respuestas emocionales son confidenciales, no punitivas y usadas exclusivamente para tu acompañamiento.</p>
-            </div>
-            <button class="btn btn-secondary btn-sm" id="btnToggleConsent">Revocar Consentimiento</button>
-          </div>
-
-          <!-- Resumen Académico del Estudiante (HU03) -->
-          <div class="kpi-grid" style="margin-bottom: 24px;">
-            <div class="kpi-card">
-              <div class="kpi-title">Mi Promedio Ponderado</div>
-              <div class="kpi-value" id="studentAvgGrade">3.8</div>
-              <div class="kpi-detail">En escala de 0.0 a 5.0</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-title">Mi Asistencia General</div>
-              <div class="kpi-value" id="studentAttendance">91%</div>
-              <div class="kpi-detail">Mínimo institucional requerido: 80%</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-title">Estado de Permanencia</div>
-              <div class="kpi-value" style="font-size: 1.3rem;">
-                <span class="badge-risk bajo" id="studentRiskBadge">Riesgo: Bajo</span>
-              </div>
-              <div class="kpi-detail">Sin alertas preventivas activas</div>
-            </div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px;">
-            <!-- Encuesta de Bienestar Estilo Typeform (HU04) -->
-            <div class="survey-card">
-              <div class="survey-progress-wrapper">
-                <div class="survey-step-indicator">
-                  <span id="surveyQuestionNum">Paso 01</span>
-                  <span id="surveyStepIndicator">Pregunta 1 de 4</span>
-                </div>
-                <div class="survey-progress-bar">
-                  <div class="survey-progress-fill" id="surveyProgressFill"></div>
-                </div>
-              </div>
-
-              <div class="survey-question-box">
-                <h3 class="survey-question-title" id="surveyQuestionTitle">¿Cómo describirías tu estado anímico general esta semana?</h3>
-                <p class="survey-question-sub" id="surveyQuestionSub">Tu respuesta es confidencial y formativa, nunca punitiva.</p>
-
-                <!-- Cuadrícula de opciones seleccionables -->
-                <div class="survey-options-grid" id="surveyOptionsGrid">
-                  <!-- Llenado dinámico en app.js -->
-                </div>
-              </div>
-
-              <div class="survey-actions">
-                <button class="btn btn-secondary btn-sm" id="btnSurveyPrev" style="visibility: hidden;">← Anterior</button>
-                <button class="btn btn-secondary btn-sm" id="btnSurveyNext">Siguiente →</button>
-              </div>
-            </div>
-
-            <!-- Mis Cursos Inscritos -->
-            <div class="card" style="margin-bottom: 0;">
-              <div class="card-header">
-                <div>
-                  <h3 class="card-title"><span class="card-title-icon">📚</span> Mis Materias Registradas</h3>
-                  <div class="card-subtitle">Semestre 2 • Ingeniería de Sistemas</div>
-                </div>
-              </div>
-              <div class="finance-breakdown-list" id="studentCoursesList">
-                <!-- Se llena con app.js -->
-              </div>
-            </div>
-          </div>
-        </section>
-
-      </div>
-    </main>
-
-  </div>
-
-  <!-- ===================================================================
-       MODAL 1: VALIDACIÓN Y SUPERVISIÓN HUMANA OBLIGATORIA (HU06)
-       =================================================================== -->
-  <div class="modal-backdrop" id="modalValidation">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 class="modal-title"><span>🛡️</span> Validación Humana de Pre-Alerta</h3>
-        <button class="modal-close-btn modal-close-trigger">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 16px;">
-          Como tutor o profesional de bienestar, tu criterio es indispensable para evitar falsos positivos y sesgos antes de oficializar un plan de acompañamiento.
-        </p>
-
-        <div style="background: var(--bg-deep); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 16px;">
-          <h4 id="modalStudentName" style="color: var(--text-white); font-size: 0.95rem; margin-bottom: 6px;">Estudiante</h4>
-          <div id="modalAcademicStats" style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Estadísticas</div>
-          <div style="font-size: 0.82rem; color: var(--red-hover);">
-            <strong>Regla del Motor:</strong> <span id="modalRuleDetails">Detalles</span>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="tutorNotesInput">Nota de Diagnóstico / Plan de Acción:</label>
-          <textarea id="tutorNotesInput" class="form-textarea" placeholder="Ej: Se coordinará reunión de tutoría personalizada para abordar dificultades de adaptación en cálculo..."></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" id="btnDismissAlert">Descartar (Falso Positivo)</button>
-        <button class="btn btn-primary" id="btnConfirmAlert">Validar y Oficializar Alerta</button>
-      </div>
+    <div class="launcher-footer">
+      Redirigiendo automáticamente a tu última vista activa...
     </div>
   </div>
 
-  <!-- ===================================================================
-       MODAL 2: POLÍTICAS DE PRIVACIDAD Y CONSENTIMIENTO (HU01)
-       =================================================================== -->
-  <div class="modal-backdrop" id="modalPrivacy">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 class="modal-title"><span>🔒</span> Política de Consentimiento y Privacidad</h3>
-        <button class="modal-close-btn modal-close-trigger">&times;</button>
-      </div>
-      <div class="modal-body" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
-        <h4 style="color: var(--text-white); margin-bottom: 8px;">Principio de Uso Formativo y No Punitivo</h4>
-        <p style="margin-bottom: 12px;">
-          El sistema ANCLA de la Facultad de Ingenierías de la Universidad de Medellín opera bajo estrictos protocolos de ética y confidencialidad. Los datos recolectados mediante encuestas perceptuales y registros académicos se emplean exclusivamente para anticipar riesgos de deserción y ofrecer soporte psico-pedagógico voluntario.
-        </p>
-        <h4 style="color: var(--text-white); margin-bottom: 8px;">Tus Derechos como Estudiante</h4>
-        <ul style="padding-left: 20px; margin-bottom: 12px;">
-          <li>Tus respuestas no inciden en tu calificación académica.</li>
-          <li>Puedes revocar tu consentimiento en cualquier instante desde tu panel.</li>
-          <li>Ninguna decisión punitiva se toma de forma automatizada por el sistema.</li>
-        </ul>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary modal-close-trigger">Entendido y Conforme</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- CONTENEDOR DE NOTIFICACIONES TOAST -->
-  <div class="toast-container" id="toastContainer"></div>
-
-  <!-- SCRIPTS EN ORDEN MODULAR (ARQUITECTURA DE TRES CAPAS) -->
-  <script src="js/data.js"></script>
-  <script src="js/rulesEngine.js"></script>
-  <script src="js/financialSimulator.js"></script>
-  <script src="js/apiService.js"></script>
-  <script src="js/app.js"></script>
+  <script>
+    // Redirección inteligente al último rol activo (por defecto: directivo)
+    const savedRole = localStorage.getItem("ancla_current_role") || "directivo";
+    setTimeout(() => {
+      window.location.replace(`views/${savedRole}.html`);
+    }, 450);
+  </script>
 </body>
 </html>
-
