@@ -500,11 +500,16 @@ const App = {
   async submitAlertValidation(decision) {
     if (!this.selectedStudentForValidation) return;
 
-    const notes = document.getElementById("tutorNotesInput").value.trim();
-    if (decision === "Validada" && !notes) {
+    const notesInput = document.getElementById("tutorNotesInput").value.trim();
+
+    // "Validada" requiere nota obligatoria del tutor
+    if (decision === "Validada" && !notesInput) {
       this.showToast("Por favor incluye una nota u observación pedagógica de acompañamiento.", "warning");
       return;
     }
+
+    // "Descartada": se registra "Falso Positivo" como observación
+    const finalNotes = decision === "Descartada" ? "Falso Positivo" : notesInput;
 
     const data = getSavedData();
     const tutorName = data.users.tutor.name;
@@ -513,7 +518,7 @@ const App = {
       this.selectedStudentForValidation.id,
       this.selectedStudentForValidation.preAlert.id,
       decision,
-      notes,
+      finalNotes,
       tutorName
     );
 
@@ -525,7 +530,9 @@ const App = {
       "success"
     );
 
-    this.renderTutorAlerts();
+    const activeFilterBtn = document.querySelector(".alert-filter-btn.active");
+    const currentFilter = activeFilterBtn ? activeFilterBtn.dataset.filter : "all";
+    this.renderTutorAlerts(currentFilter);
     this.renderAllStudentsTable();
   },
 
