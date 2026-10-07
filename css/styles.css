@@ -5,48 +5,48 @@
    =================================================================== */
 
 :root {
-  /* Paleta Base: Grises Oscuros */
-  --bg-deep: #0b0c0e;          /* Fondo base principal de la aplicación */
-  --bg-sidebar: #111317;       /* Fondo del menú lateral y encabezados */
-  --bg-card: #171a21;          /* Fondo de tarjetas y paneles */
-  --bg-card-hover: #1f232d;    /* Hover sobre tarjetas interactivas */
-  --bg-input: #1d212b;         /* Fondo para campos de texto y selects */
-  --bg-badge-gray: #262b37;    /* Píldoras y etiquetas secundarias */
+  /* Paleta Base: Grises Oscuros (suavizados para mayor comodidad visual) */
+  --bg-deep: #0f1117;          /* Fondo base — gris-azul oscuro, menos agresivo que negro puro */
+  --bg-sidebar: #13161e;       /* Sidebar ligeramente más cálido */
+  --bg-card: #1a1d27;          /* Tarjetas con mayor diferencia del fondo */
+  --bg-card-hover: #212535;    /* Hover suave */
+  --bg-input: #1e2130;         /* Inputs con fondo legible */
+  --bg-badge-gray: #272c3a;    /* Píldoras y etiquetas secundarias */
 
-  /* Bordes */
-  --border-subtle: #242935;    /* Bordes sutiles divisores */
-  --border-card: #2f3545;      /* Bordes de tarjetas y contenedores */
-  --border-focus: #ff4d5b;     /* Borde enfocado con acento rojo */
+  /* Bordes — más visibles para separar secciones sin agresividad */
+  --border-subtle: #252a38;
+  --border-card: #313a52;
+  --border-focus: #ff4d5b;
 
-  /* Blanco y Grises de Texto */
-  --text-white: #ffffff;       /* Títulos principales y máximo contraste */
-  --text-primary: #f2f4f8;     /* Texto de lectura principal */
-  --text-secondary: #9aa3b2;   /* Subtítulos y metadatos */
-  --text-muted: #677080;       /* Textos secundarios o ayudas */
+  /* Texto — jerarquía clara y confortable */
+  --text-white: #f0f2f8;       /* Blanco suavizado (evita fatiga frente a fondo oscuro) */
+  --text-primary: #d8dde8;     /* Texto principal más descansado */
+  --text-secondary: #8b96aa;   /* Subtítulos y metadatos */
+  --text-muted: #5a6375;       /* Ayudas y textos terciarios */
 
-  /* Paleta de Acento: Rojo Ancla y Estados Críticos */
-  --red-primary: #e63946;      /* Rojo institucional del ancla y botones primarios */
-  --red-hover: #ff4d5b;        /* Rojo vivo para estados hover */
-  --red-dark: #9e1422;         /* Rojo oscuro para fondos de alertas */
-  --red-bg-subtle: rgba(230, 57, 70, 0.12); /* Fondo suave de alertas */
-  --red-glow: rgba(230, 57, 70, 0.35);      /* Sombra luminosa */
+  /* Acento: Rojo Ancla */
+  --red-primary: #e63946;
+  --red-hover: #ff4d5b;
+  --red-dark: #9e1422;
+  --red-bg-subtle: rgba(230, 57, 70, 0.10);
+  --red-glow: rgba(230, 57, 70, 0.28);
 
-  /* Colores de Apoyo para Estados */
-  --status-critical: #e63946;  /* Rojo crítico */
-  --status-high: #ff5e57;      /* Rojo/naranja alto */
-  --status-medium: #ff9f43;    /* Ámbar de advertencia moderada */
-  --status-low: #00b894;       /* Verde azulado de normalidad */
+  /* Estados */
+  --status-critical: #e63946;
+  --status-high: #ff5e57;
+  --status-medium: #ff9f43;
+  --status-low: #00b894;
   --status-info: #0984e3;
 
   /* Dimensiones y Sombras */
-  --sidebar-width: 270px;
-  --header-height: 72px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
+  --sidebar-width: 272px;
+  --header-height: 66px;
+  --radius-sm: 7px;
+  --radius-md: 11px;
   --radius-lg: 16px;
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.45);
-  --shadow-modal: 0 10px 40px rgba(0, 0, 0, 0.7);
-  --transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.35);
+  --shadow-modal: 0 12px 48px rgba(0, 0, 0, 0.65);
+  --transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* Reset y tipografía */
@@ -57,13 +57,16 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: var(--bg-deep);
   color: var(--text-primary);
   min-height: 100vh;
   display: flex;
   overflow-x: hidden;
-  line-height: 1.5;
+  line-height: 1.6;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ===================================================================
@@ -88,16 +91,17 @@ body {
   height: 100vh;
   z-index: 100;
   transition: var(--transition);
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.25);
 }
 
 /* UBICACIÓN CLAVE DEL LOGO: HEADER DEL SIDEBAR */
 .sidebar-logo-area {
-  padding: 22px 20px;
+  padding: 24px 20px;
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   gap: 14px;
-  background: linear-gradient(180deg, rgba(230, 57, 70, 0.08) 0%, rgba(17, 19, 23, 0) 100%);
+  background: linear-gradient(160deg, rgba(230, 57, 70, 0.07) 0%, transparent 70%);
   position: relative;
 }
 
@@ -224,24 +228,25 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  border-radius: var(--radius-md);
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   font-weight: 500;
   transition: var(--transition);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   border-left: 3px solid transparent;
+  letter-spacing: 0.01em;
 }
 
 .nav-link:hover {
-  background-color: var(--bg-card);
+  background-color: rgba(255, 255, 255, 0.05);
   color: var(--text-white);
 }
 
 .nav-link.active {
-  background-color: rgba(230, 57, 70, 0.12);
+  background: linear-gradient(90deg, rgba(230, 57, 70, 0.15) 0%, rgba(230, 57, 70, 0.04) 100%);
   color: var(--text-white);
   border-left-color: var(--red-primary);
   font-weight: 600;
@@ -323,12 +328,13 @@ body {
 .topbar {
   height: var(--header-height);
   border-bottom: 1px solid var(--border-subtle);
-  background-color: rgba(17, 19, 23, 0.85);
-  backdrop-filter: blur(12px);
+  background-color: rgba(19, 22, 30, 0.9);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 30px;
+  padding: 0 32px;
   position: sticky;
   top: 0;
   z-index: 90;
@@ -341,18 +347,20 @@ body {
 }
 
 .page-title {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--text-white);
+  letter-spacing: -0.01em;
 }
 
 .context-tag {
-  font-size: 0.75rem;
-  background: var(--bg-badge-gray);
+  font-size: 0.72rem;
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-secondary);
   padding: 4px 10px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
+  letter-spacing: 0.02em;
 }
 
 .topbar-right {
@@ -419,13 +427,13 @@ body {
 
 /* Contenido Principal con Vistas Dinámicas */
 .views-container {
-  padding: 28px 32px 60px;
+  padding: 30px 36px 64px;
   flex: 1;
 }
 
 .view-section {
-  display: none; /* Se activa mediante JS según el rol o tab */
-  animation: fadeIn 0.3s ease-in-out;
+  display: none;
+  animation: fadeIn 0.28s ease-in-out;
 }
 
 .view-section.active {
@@ -433,7 +441,7 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -445,28 +453,34 @@ body {
   background-color: var(--bg-card);
   border: 1px solid var(--border-card);
   border-radius: var(--radius-md);
-  padding: 22px;
+  padding: 24px;
   box-shadow: var(--shadow-card);
   margin-bottom: 24px;
   position: relative;
+  transition: border-color 0.2s ease;
+}
+
+.card:hover {
+  border-color: #3a4560;
 }
 
 .card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
-  padding-bottom: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .card-title {
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--text-white);
   display: flex;
   align-items: center;
   gap: 10px;
+  letter-spacing: -0.01em;
 }
 
 .card-title .card-title-icon {
@@ -482,16 +496,16 @@ body {
 /* Cuadrículas de Métricas (KPIs) */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 18px;
-  margin-bottom: 26px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .kpi-card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-card);
   border-radius: var(--radius-md);
-  padding: 18px 20px;
+  padding: 20px 22px;
   position: relative;
   overflow: hidden;
   transition: var(--transition);
@@ -500,6 +514,7 @@ body {
 .kpi-card:hover {
   transform: translateY(-2px);
   border-color: var(--border-focus);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
 }
 
 .kpi-card::before {
@@ -507,32 +522,35 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 4px;
+  width: 3px;
   height: 100%;
   background: var(--red-primary);
+  border-radius: 0 2px 2px 0;
 }
 
 .kpi-title {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.9px;
   font-weight: 600;
 }
 
 .kpi-value {
-  font-size: 1.85rem;
+  font-size: 1.7rem;
   font-weight: 800;
   color: var(--text-white);
-  margin: 6px 0;
+  margin: 8px 0 4px;
   display: flex;
   align-items: baseline;
   gap: 8px;
+  letter-spacing: -0.02em;
 }
 
 .kpi-detail {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
+  line-height: 1.4;
 }
 
 .kpi-badge-trend {
@@ -755,29 +773,34 @@ body {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 0.85rem;
+  font-size: 0.855rem;
 }
 
 .data-table th {
-  background-color: var(--bg-sidebar);
-  padding: 14px 16px;
+  background-color: rgba(0, 0, 0, 0.25);
+  padding: 13px 18px;
   color: var(--text-secondary);
   font-weight: 600;
   text-transform: uppercase;
-  font-size: 0.72rem;
-  letter-spacing: 0.8px;
-  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.68rem;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border-card);
 }
 
 .data-table td {
-  padding: 14px 16px;
+  padding: 15px 18px;
   border-bottom: 1px solid var(--border-subtle);
   color: var(--text-primary);
   vertical-align: middle;
+  transition: background-color 0.15s ease;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
 }
 
 .data-table tr:hover td {
-  background-color: var(--bg-card-hover);
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
 .student-col {
