@@ -116,7 +116,14 @@ const App = {
 
   applyRole(role) {
     const data = getSavedData();
-    const user = data.users[role];
+    // Mapa de rol (selector) → clave en data.users
+    const roleKeyMap = {
+      estudiante: "student",
+      tutor: "tutor",
+      directivo: "executive"
+    };
+    const userKey = roleKeyMap[role] || role;
+    const user = data.users[userKey];
 
     // Actualizar datos del usuario en footer de sidebar
     document.getElementById("sidebarUserName").textContent = user.name;
