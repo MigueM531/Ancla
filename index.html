@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ancla | Sistema de Monitoreo Temprano y Retención Estudiantil - UdeM</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <meta name="description" content="Prototipo funcional de frontend para el sistema Ancla de la Facultad de Ingenierías, Universidad de Medellín. Monitoreo preventivo y no punitivo de permanencia estudiantil.">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- ===================================================================
+         BARRA LATERAL DE NAVEGACIÓN (SIDEBAR)
+         =================================================================== -->
+    <aside class="sidebar" id="sidebar">
+
+      <!-- ===============================================================
+           UBICACIÓN DEL LOGO #1: LOGO PRINCIPAL DEL PROYECTO ANCLA
+           Aquí se ubica el logo oficial de Ancla.
+           Para reemplazar por tu archivo oficial de imagen, sustituye el src:
+           <img src="assets/tu-logo-ancla.png" alt="Logo Ancla" class="logo-img">
+           =============================================================== -->
+      <div class="sidebar-brand">
+        <!-- LOGO PRINCIPAL (Haga clic para reiniciar vista) -->
+        <a href="#" class="logo-container" title="Ancla - Sistema de Monitoreo Temprano">
+          <img src="assets/logo-ancla.svg" alt="Logo Ancla" class="logo-img" id="main-brand-logo">
+        </a>
+      </div>
+
+      <!-- NAVEGACIÓN PRINCIPAL SEGÚN HISTORIAS DE USUARIO -->
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Vistas por Roles (HU02)</span>
+        
+        <a href="#estudiante" class="nav-item active" data-target="student">
+          <span class="icon">🎓</span>
+          <span>Portal Estudiante</span>
+        </a>
+
+        <a href="#tutor" class="nav-item" data-target="tutor">
+          <span class="icon">🩺</span>
+          <span>Tutor & Bienestar</span>
+          <span class="nav-badge" id="sidebar-alert-counter">3</span>
+        </a>
+
+        <a href="#directivo" class="nav-item" data-target="director">
+          <span class="icon">📊</span>
+          <span>Dashboard Directivo</span>
+        </a>
+
+        <span class="nav-section-title">Módulos Especializados</span>
+
+        <a href="#encuesta" class="nav-item" onclick="switchRole('student'); document.getElementById('typeform-survey-card').scrollIntoView({behavior:'smooth'});">
+          <span class="icon">📝</span>
+          <span>Micro-Encuesta (HU04)</span>
+        </a>
+
+        <a href="#simulador" class="nav-item" onclick="switchRole('director'); document.getElementById('financial-simulator-section').scrollIntoView({behavior:'smooth'});">
+          <span class="icon">💰</span>
+          <span>Simulador ROI (HU10)</span>
+        </a>
+
+        <a href="#arquitectura" class="nav-item" onclick="openModal('modal-architecture-info')">
+          <span class="icon">⚙️</span>
+          <span>Arquitectura &amp; API</span>
+        </a>
+      </nav>
+
+      <!-- ===============================================================
+           UBICACIÓN DEL LOGO #2: LOGO INSTITUCIONAL DE LA UNIVERSIDAD
+           Aquí se ubica el logo o escudo de la Universidad de Medellín
+           y la Facultad de Ingenierías.
+           Para reemplazar por tu archivo oficial, sustituye el src:
+           <img src="assets/tu-logo-udem.png" alt="Logo UdeM" class="inst-logo-img">
+           =============================================================== -->
+      <div class="sidebar-footer">
+        <div class="institutional-logo-zone" title="Facultad de Ingenierías - Universidad de Medellín">
+          <img src="assets/logo-udem.svg" alt="Logo Universidad de Medellín" class="inst-logo-img">
+          <div class="inst-info">
+            <span class="inst-title">UdeM Ingenierías</span>
+            <span class="inst-sub">2026 - Medellín, Col.</span>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ===================================================================
+         ÁREA PRINCIPAL DE LA APLICACIÓN (HEADER + VISTAS)
+         =================================================================== -->
+    <div class="main-wrapper">
+
+      <!-- TOP HEADER CON SWITCHER DE ROLES Y NOTIFICACIONES -->
+      <header class="top-header">
+        <div class="header-left">
+          <div class="page-context">
+            <h1 class="page-title" id="header-title">Portal del Estudiante</h1>
+            <span class="page-subtitle" id="header-subtitle">Facultad de Ingenierías | Monitoreo y Acompañamiento Preventivo</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          
+          <!-- CONTROLADOR DE ROLES INTERACTIVO (HU02) -->
+          <div class="role-switcher-container" title="Cambiar rol para explorar los módulos del sistema">
+            <span class="role-switcher-label">Rol:</span>
+            <button class="role-pill active" data-role="student">👨‍🎓 Estudiante</button>
+            <button class="role-pill" data-role="tutor">🩺 Tutor</button>
+            <button class="role-pill" data-role="director">📊 Directivo</button>
+          </div>
+
+          <!-- NOTIFICACIONES CON ACCENTO ROJO (HU08) -->
+          <button class="btn-icon" title="Notificaciones de alertas críticas" onclick="switchRole('tutor')">
+            <span>🔔</span>
+            <span class="badge-dot" id="header-bell-badge"></span>
+          </button>
+
+          <!-- PERFIL DE USUARIO DINÁMICO -->
+          <div class="user-profile">
+            <div class="user-avatar" id="user-avatar-initials">MG</div>
+            <div class="user-details">
+              <span class="user-name" id="user-display-name">Mateo Gómez Ríos</span>
+              <span class="user-role-tag" id="user-role-badge">Estudiante</span>
+            </div>
+          </div>
+
+        </div>
+      </header>
+
+      <!-- ===============================================================
+           CONTENEDOR DINÁMICO DE VISTAS (SE MUESTRAN SEGÚN EL ROL)
+           =============================================================== -->
+      <main class="content-area">
+
+        <!-- =============================================================
+             1. VISTA ESTUDIANTE (HU01, HU03, HU04)
+             ============================================================= -->
+        <section id="view-student" class="view-section active">
+          
+          <!-- BANNER PREVENTIVO Y CONSENTIMIENTO INFORMADO (HU01) -->
+          <div class="banner-preventive">
+            <div class="banner-content">
+              <span class="banner-icon">🛡️</span>
+              <div>
+                <h2 class="banner-title">Enfoque Preventivo y No Punitivo</h2>
+                <p class="banner-desc">
+                  Ancla no es un sistema sancionador. Tus datos académicos y emocionales se analizan bajo confidencialidad estricta para activar orientación voluntaria antes de que se presenten dificultades.
+                </p>
+                <div style="margin-top: 0.6rem;">
+                  <span id="consent-status-badge" class="badge badge-risk-stable">
+                    ✅ Consentimiento Informado Vigente
+                  </span>
+                </div>
+              </div>
+            </div>
+            <button class="btn-secondary" id="btn-open-consent-modal">
+              Gestionar Privacidad
+            </button>
+          </div>
+
+          <!-- TARJETAS DE RESUMEN ACADÉMICO DEL ESTUDIANTE -->
+          <div class="grid-cards">
+            <div class="card">
+              <div class="card-header-clean">
+                <span class="card-title">Promedio Acumulado</span>
+                <span style="color: var(--text-muted); font-size: 0.8rem;">2026-2</span>
+              </div>
+              <div class="card-metric" style="color: var(--text-white);">3.60</div>
+              <div class="card-meta">5 asignaturas inscritas (15 créditos)</div>
+            </div>
+
+            <div class="card">
+              <div class="card-header-clean">
+                <span class="card-title">Asistencia Global</span>
+                <span class="badge badge-risk-moderate">Atención</span>
+              </div>
+              <div class="card-metric" style="color: var(--warning-amber);">84.8%</div>
+              <div class="card-meta">Umbral mínimo institucional: 80%</div>
+            </div>
+
+            <div class="card">
+              <div class="card-header-clean">
+                <span class="card-title">Acompañamiento Tutor</span>
+                <span class="badge badge-risk-stable">Disponible</span>
+              </div>
+              <div class="card-metric" style="font-size: 1.3rem; margin: 0.85rem 0;">1 Asesoría</div>
+              <div class="card-meta">Tutor asignado: Facultad de Ingenierías</div>
+            </div>
+          </div>
+
+          <!-- MICRO-ENCUESTA DE BIENESTAR ESTILO TYPEFORM (HU04 + BENCHMARKING) -->
+          <div class="typeform-container" id="typeform-survey-card">
+            <div class="tf-header">
+              <div>
+                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--red-light); font-weight: 700;">
+                  Percepción Cualitativa Semanal
+                </span>
+                <h3 style="color: var(--text-white); font-size: 1.1rem; margin-top: 0.2rem;">
+                  Pulsómetro de Bienestar y Carga Académica
+                </h3>
+              </div>
+              <span class="tf-steps-badge" id="tf-current-step-badge">Pregunta 1 de 3</span>
+            </div>
+
+            <!-- PASO 1: ESTADO EMOCIONAL -->
+            <div class="tf-step-slide active" id="tf-step-1">
+              <h4 class="tf-question">¿Cómo describirías tu nivel de bienestar emocional durante esta semana?</h4>
+              <p class="tf-subtitle">Selecciona una opción que mejor refleje cómo te has sentido en la facultad.</p>
+              
+              <div class="tf-options-grid">
+                <div class="tf-option-btn tf-mood-btn" data-value="1">
+                  <span class="tf-option-icon">😄</span>
+                  <span class="tf-option-title">Excelente</span>
+                  <span class="tf-option-desc">Motivado(a) y con energía plena</span>
+                </div>
+                <div class="tf-option-btn tf-mood-btn" data-value="2">
+                  <span class="tf-option-icon">🙂</span>
+                  <span class="tf-option-title">Bien</span>
+                  <span class="tf-option-desc">Tranquilo(a), con retos manejables</span>
+                </div>
+                <div class="tf-option-btn tf-mood-btn selected" data-value="3">
+                  <span class="tf-option-icon">😐</span>
+                  <span class="tf-option-title">Neutro / Regular</span>
+                  <span class="tf-option-desc">Con algo de tensión o cansancio</span>
+                </div>
+                <div class="tf-option-btn tf-mood-btn" data-value="4">
+                  <span class="tf-option-icon">😟</span>
+                  <span class="tf-option-title">Abrumado(a)</span>
+                  <span class="tf-option-desc">Estrés alto que afecta mi concentración</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- PASO 2: CARGA ACADÉMICA PERCIBIDA -->
+            <div class="tf-step-slide" id="tf-step-2">
+              <h4 class="tf-question">¿Cómo evalúas la carga académica y el ritmo de tus materias en este momento?</h4>
+              <p class="tf-subtitle">Esto nos ayuda a medir picos de saturación en el semestre.</p>
+              
+              <div class="tf-options-grid">
+                <div class="tf-option-btn tf-load-btn" data-value="light">
+                  <span class="tf-option-icon">🟢</span>
+                  <span class="tf-option-title">Ligera</span>
+                  <span class="tf-option-desc">Tiempo suficiente para talleres y descanso</span>
+                </div>
+                <div class="tf-option-btn tf-load-btn selected" data-value="manageable">
+                  <span class="tf-option-icon">🟡</span>
+                  <span class="tf-option-title">Exigente pero manejable</span>
+                  <span class="tf-option-desc">Requiere esfuerzo constante</span>
+                </div>
+                <div class="tf-option-btn tf-load-btn" data-value="critical">
+                  <span class="tf-option-icon">🔴</span>
+                  <span class="tf-option-title">Crítica / Desbordante</span>
+                  <span class="tf-option-desc">No alcanzo a cubrir las entregas a tiempo</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- PASO 3: ACOMPAÑAMIENTO VOLUNTARIO -->
+            <div class="tf-step-slide" id="tf-step-3">
+              <h4 class="tf-question">¿Desearías recibir una orientación académica o apoyo voluntario de Bienestar?</h4>
+              <p class="tf-subtitle">Un tutor de permanencia se pondrá en contacto contigo de forma personalizada.</p>
+              
+              <div class="tf-options-grid">
+                <div class="tf-option-btn tf-support-btn" data-value="yes">
+                  <span class="tf-option-icon">🤝</span>
+                  <span class="tf-option-title">Sí, me gustaría</span>
+                  <span class="tf-option-desc">Necesito aclarar dudas sobre una materia o metodología</span>
+                </div>
+                <div class="tf-option-btn tf-support-btn selected" data-value="no">
+                  <span class="tf-option-icon">👍</span>
+                  <span class="tf-option-title">No por ahora</span>
+                  <span class="tf-option-desc">Me siento en capacidad de seguir autónomamente</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- BARRA DE PROGRESO Y CONTROLES -->
+            <div class="tf-footer">
+              <div class="tf-progress-bar">
+                <div class="tf-progress-fill" id="tf-progress-fill"></div>
+              </div>
+              <div style="display: flex; gap: 0.75rem;">
+                <button class="btn-secondary" id="tf-btn-prev" style="display: none;">← Anterior</button>
+                <button class="btn-primary" id="tf-btn-next">Continuar →</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TABLA DE MATERIAS Y ASISTENCIA (HU03) -->
+          <div class="table-card">
+            <div class="table-header-bar">
+              <div class="table-title-group">
+                <h3>Evolución Académica y Asistencias</h3>
+                <p>Datos integrados con el sistema de notas institucional</p>
+              </div>
+              <span class="badge badge-risk-stable">Semestre 2026-2</span>
+            </div>
+            <div style="overflow-x: auto;">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Asignatura</th>
+                    <th>Créditos</th>
+                    <th>Nota Parcial</th>
+                    <th>Asistencia</th>
+                    <th>Estado de Alerta</th>
+                  </tr>
+                </thead>
+                <tbody id="student-courses-tbody">
+                  <!-- Llenado dinámico mediante app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- =============================================================
+             2. VISTA TUTOR / BIENESTAR (HU05, HU06, HU08)
+             ============================================================= -->
+        <section id="view-tutor" class="view-section">
+          
+          <!-- BANNER DE ENFOQUE DETERMINISTA Y SUPERVISIÓN HUMANA (HU06) -->
+          <div class="banner-preventive" style="border-left-color: var(--red-primary);">
+            <div class="banner-content">
+              <span class="banner-icon">🩺</span>
+              <div>
+                <h2 class="banner-title">Bandeja de Supervisión Humana Obligatoria</h2>
+                <p class="banner-desc">
+                  El motor de reglas genera <strong>pre-alertas automáticas</strong> al cruzar umbrales académicos y socioemocionales. Como profesional o tutor, tu evaluación cualitativa es obligatoria para validar o descartar falsos positivos antes de oficializar acciones.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- MÉTRICAS RÁPIDAS DEL TUTOR -->
+          <div class="grid-cards">
+            <div class="card">
+              <div class="card-header-clean">
+                <span class="card-title">Pre-Alertas Pendientes</span>
+                <span class="badge badge-risk-critical">Por Revisar</span>
+              </div>
+              <div class="card-metric" id="tutor-count-pending" style="color: var(--red-light);">3</div>
+              <div class="card-meta">Requieren criterio y validación humana</div>
+            </div>
+
+            <div class="card">
+              <div class="card-header-clean">
+                <span class="card-title">Casos Validados</span>
+                <span class="badge badge-risk-stable">En Acompañamiento</span>
+              </div>
+              <div class="card-metric" id="tutor-count-validated" style="color: var(--text-white);">1</div>
+              <div class="card-meta">Con plan de permanencia activo</div>
+            </div>
+
+            <div class="card">
+              <div class="card-header-clean">
+                <span class="card-title">Falsos Positivos Descartados</span>
+                <span style="color: var(--text-muted); font-size: 0.8rem;">Mitigación DOFA</span>
+              </div>
+              <div class="card-metric" id="tutor-count-discarded" style="color: var(--text-secondary);">1</div>
+              <div class="card-meta">Causales justificadas sin riesgo real</div>
+            </div>
+          </div>
+
+          <!-- BANDEJA DE PRE-ALERTAS POR UMBRALES (HU05 & HU06) -->
+          <div class="table-card">
+            <div class="table-header-bar">
+              <div class="table-title-group">
+                <h3>Monitoreo Determinista de Riesgo de Deserción</h3>
+                <p>Estudiantes con señales tempranas por notas, asistencia o pulsómetro emocional</p>
+              </div>
+
+              <!-- FILTROS Y BÚSQUEDA -->
+              <div class="table-filters">
+                <input type="text" id="search-alert-input" class="input-search" placeholder="Buscar por nombre o programa...">
+                <select id="filter-risk-select" class="select-filter">
+                  <option value="all">Todos los niveles</option>
+                  <option value="critical">🔴 Riesgo Crítico</option>
+                  <option value="moderate">🟠 Riesgo Moderado</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Estudiante & Programa</th>
+                    <th>Nivel de Riesgo</th>
+                    <th>Causales / Reglas Disparadas (HU05)</th>
+                    <th>Estado de Validación</th>
+                    <th>Acción Humana (HU06)</th>
+                  </tr>
+                </thead>
+                <tbody id="pre-alerts-tbody">
+                  <!-- Llenado dinámico mediante app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- =============================================================
+             3. VISTA DIRECTIVO / COORDINADOR (HU07, HU09, HU10)
+             ============================================================= -->
+        <section id="view-director" class="view-section">
+          
+          <!-- KPIS ESTRATÉGICOS (HU07) -->
+          <div class="grid-cards">
+            <div class="card">
+              <div class="card-header-clean">
+                <span class="card-title">Población en Monitoreo</span>
+                <span style="color: var(--text-muted); font-size: 0.8rem;">Fac. Ingenierías</span>
+              </div>
+              <div class="card-metric" id="dir-total-monitored">1,420</div>
+              <div class="card-meta">Semestres 1 a 4 priorizados</div>
+            </div>
+
+            <div class="card">
+              <div class="card-header-clean">
+                <span class="card-title">Retención Proyectada</span>
+                <span class="badge badge-risk-stable">+3.2% vs 2025</span>
+              </div>
+              <div class="card-metric" id="dir-retention-rate" style="color: var(--success-green);">86.4%</div>
+              <div class="card-meta">Meta institucional: 85%</div>
+            </div>
+
+            <div class="card">
+              <div class="card-header-clean">
+                <span class="card-title">Alertas Críticas Activas</span>
+                <span class="badge badge-risk-critical">Atención</span>
+              </div>
+              <div class="card-metric" id="dir-active-alerts" style="color: var(--red-light);">2</div>
+              <div class="card-meta">Casos con intervención inmediata</div>
+            </div>
+          </div>
+
+          <!-- GRÁFICOS VISUALES VECTORIALES (HU07) -->
+          <div class="grid-cards" style="grid-template-columns: 1fr 1fr;">
+            
+            <!-- DISTRIBUCIÓN POR PROGRAMAS -->
+            <div class="card">
+              <div class="card-header-clean">
+                <span class="card-title">Distribución de Alertas por Programa</span>
+                <span style="color: var(--text-muted); font-size: 0.75rem;">Semestre Actual</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 0.85rem; margin-top: 1rem;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 4px;">
+                    <span>Ingeniería de Sistemas</span>
+                    <strong style="color: var(--red-light);">38% (12 casos)</strong>
+                  </div>
+                  <div style="height: 6px; background: var(--bg-app); border-radius: 3px; overflow: hidden;">
+                    <div style="width: 38%; height: 100%; background: var(--red-primary);"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 4px;">
+                    <span>Ingeniería Civil</span>
+                    <strong style="color: var(--warning-amber);">26% (8 casos)</strong>
+                  </div>
+                  <div style="height: 6px; background: var(--bg-app); border-radius: 3px; overflow: hidden;">
+                    <div style="width: 26%; height: 100%; background: var(--warning-amber);"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 4px;">
+                    <span>Ingeniería Industrial</span>
+                    <strong style="color: var(--text-secondary);">20% (6 casos)</strong>
+                  </div>
+                  <div style="height: 6px; background: var(--bg-app); border-radius: 3px; overflow: hidden;">
+                    <div style="width: 20%; height: 100%; background: var(--text-secondary);"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 4px;">
+                    <span>Otras Ingenierías (Ambiental, Financiera)</span>
+                    <strong style="color: var(--success-green);">16% (5 casos)</strong>
+                  </div>
+                  <div style="height: 6px; background: var(--bg-app); border-radius: 3px; overflow: hidden;">
+                    <div style="width: 16%; height: 100%; background: var(--success-green);"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ANÁLISIS DE CAUSALES DE ALERTA -->
+            <div class="card">
+              <div class="card-header-clean">
+                <span class="card-title">Causales Dominantes de Pre-Alerta</span>
+                <span style="color: var(--text-muted); font-size: 0.75rem;">Cruce Cuantitativo / Cualitativo</span>
+              </div>
+              <div style="padding: 0.5rem 0; font-size: 0.85rem; color: var(--text-secondary);">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-subtle);">
+                  <span>📉 Rendimiento Académico (&lt; 3.0)</span>
+                  <span class="badge badge-risk-critical">42%</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-subtle);">
+                  <span>🚪 Inasistencia Crítica (&lt; 80%)</span>
+                  <span class="badge badge-risk-moderate">31%</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-subtle);">
+                  <span>🧠 Agobio Emocional / Carga Percibida</span>
+                  <span class="badge badge-risk-moderate">19%</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0;">
+                  <span>👥 Solicitud Voluntaria de Tutoría</span>
+                  <span class="badge badge-risk-stable">8%</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- SIMULADOR FINANCIERO Y RETORNO DE INVERSIÓN (HU09, HU10) -->
+          <div class="simulator-box" id="financial-simulator-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <span style="color: var(--red-light); font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
+                  Gestión Financiera &amp; Sostenibilidad SaaS (HU09, HU10)
+                </span>
+                <h3 style="color: var(--text-white); font-size: 1.25rem; margin-top: 0.2rem;">
+                  Simulador de Impacto Económico por Retención Estudiantil
+                </h3>
+              </div>
+              <span class="badge badge-risk-stable" style="padding: 6px 12px;">Modelo de Retorno UdeM</span>
+            </div>
+
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 0.6rem; max-width: 780px;">
+              Evalúa la relación costo-beneficio del proyecto Ancla. Cada estudiante retenido representa matrículas protegidas en su ciclo académico frente al costo operativo de la infraestructura de monitoreo.
+            </p>
+
+            <div class="sim-grid">
+              
+              <!-- PARÁMETROS INTERACTIVOS -->
+              <div>
+                <div class="sim-control-group">
+                  <div class="sim-label-row">
+                    <span class="sim-label">Estudiantes Retenidos (Meta Preventiva):</span>
+                    <span class="sim-value-badge" id="badge-rescued-students">18 Estudiantes</span>
+                  </div>
+                  <input type="range" id="range-rescued-students" class="sim-range" min="1" max="50" value="18">
+                  <span style="font-size: 0.72rem; color: var(--text-muted);">Ajusta la cantidad de estudiantes que evitan la deserción semestralmente</span>
+                </div>
+
+                <div class="sim-control-group">
+                  <div class="sim-label-row">
+                    <span class="sim-label">Valor Promedio de Matrícula Semestral (COP):</span>
+                    <span class="sim-value-badge" id="badge-tuition-value">$ 4.800.000</span>
+                  </div>
+                  <input type="range" id="range-tuition-value" class="sim-range" min="3000000" max="7000000" step="100000" value="4800000">
+                  <span style="font-size: 0.72rem; color: var(--text-muted);">Promedio representativo para programas de la Facultad de Ingenierías</span>
+                </div>
+
+                <div style="background: var(--bg-input); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-top: 1rem;">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); display: block; font-weight: 700;">COSTO DE OPERACIÓN ANCLA (HU09)</span>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.3rem;">
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Infraestructura Cloud, Seguridad y SaaS Anual</span>
+                    <strong style="color: var(--text-white); font-size: 0.95rem;">$ 30.000.000 COP / año</strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RESULTADOS CALCULADOS EN TIEMPO REAL -->
+              <div class="sim-results-card">
+                <div class="sim-kpi-item">
+                  <span class="sim-kpi-title">Ingresos de Matrícula Protegidos (Anual)</span>
+                  <div class="sim-kpi-amount highlight-green" id="sim-gross-saved">$ 172.800.000</div>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">Cálculo sobre 2 semestres de permanencia garantizada</span>
+                </div>
+
+                <div class="sim-kpi-item">
+                  <span class="sim-kpi-title">Beneficio Neto Institucional</span>
+                  <div class="sim-kpi-amount" id="sim-net-benefit" style="color: var(--text-white);">$ 142.800.000</div>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">Ingresos protegidos menos costo total de operación</span>
+                </div>
+
+                <div class="sim-kpi-item">
+                  <span class="sim-kpi-title">Retorno de Inversión (ROI Estimado)</span>
+                  <div class="sim-kpi-amount highlight-red" id="sim-roi-percentage">+476%</div>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">Rentabilidad social y económica de la permanencia</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- ===================================================================
+       MODAL 1: POLÍTICA DE PRIVACIDAD Y CONSENTIMIENTO (HU01)
+       =================================================================== -->
+  <div class="modal-overlay" id="modal-privacy-consent">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">🛡️ Política de Privacidad y Consentimiento</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1rem;">
+          En cumplimiento con la <strong>Ley Estatutaria 1581 de 2012</strong> de Protección de Datos Personales y los lineamientos de la <strong>Universidad de Medellín</strong>, el proyecto <strong>Ancla</strong> garantiza los siguientes principios:
+        </p>
+
+        <ul style="padding-left: 1.25rem; font-size: 0.83rem; color: var(--text-primary); margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem;">
+          <li><strong>Principio de Finalidad Preventiva:</strong> La información sobre tus notas, asistencias y bienestar emocional se utiliza exclusivamente para diseñar estrategias de apoyo académico oportunas y nunca con fines punitivos, disciplinarios ni sancionadores.</li>
+          <li><strong>Confidencialidad y Roles:</strong> Tus percepciones emocionales sólo son accesibles para los profesionales de Bienestar Estudiantil y tutores autorizados bajo estricto secreto profesional.</li>
+          <li><strong>Derecho de Revocatoria (Habeas Data):</strong> Puedes consultar, actualizar o retirar tu consentimiento en cualquier instante sin que esto afecte tu matrícula o estatus académico institucional.</li>
+        </ul>
+
+        <div style="background: var(--bg-input); padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); font-size: 0.8rem; color: var(--text-muted);">
+          🔒 Al continuar, autorizas el procesamiento automatizado mediante el motor de reglas determinista de Ancla con supervisión humana obligatoria.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary modal-close-btn">Cerrar</button>
+        <button class="btn-primary" id="btn-confirm-consent">Aceptar Consentimiento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL 2: SUPERVISIÓN HUMANA OBLIGATORIA DEL TUTOR (HU06)
+       =================================================================== -->
+  <div class="modal-overlay" id="modal-validation-action">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="modal-student-name">Validación de Caso Estudiantil</h3>
+          <span style="font-size: 0.75rem; color: var(--red-light);" id="modal-student-info">Ingeniería</span>
+        </div>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 1.25rem;">
+          <span class="form-label">Causales detectadas por el Motor Determinista:</span>
+          <ul id="modal-triggers-list" style="padding-left: 1.25rem; font-size: 0.83rem; color: var(--text-secondary); margin-top: 0.4rem;">
+            <!-- Rellenado dinámicamente -->
+          </ul>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="modal-tutor-notes">Concepto Profesional del Tutor (Obligatorio para auditar):</label>
+          <textarea id="modal-tutor-notes" class="form-textarea" placeholder="Ej: 'Se entrevistó al estudiante. Justifica inasistencia por incapacidad médica' o 'Se agenda plan de nivelación con monitor de cálculo'"></textarea>
+        </div>
+
+        <div style="background: var(--bg-card); padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); font-size: 0.78rem; color: var(--text-muted);">
+          ⚖️ <strong>Criterio de Aceptación 2:</strong> Ninguna alerta se hace oficial ni se envía a directivos sin la previa validación y firma del tutor responsable.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-danger-outline" id="btn-confirm-discard">Descartar (Falso Positivo)</button>
+        <button class="btn-primary" id="btn-confirm-validation">Validar y Abrir Acompañamiento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL 3: ARQUITECTURA DEL SISTEMA Y CONEXIÓN DE API REST
+       =================================================================== -->
+  <div class="modal-overlay" id="modal-architecture-info">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 class="modal-title">⚙️ Arquitectura Monolítica Modular y Endpoints API</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+          Este prototipo representa la <strong>Capa de Presentación</strong> desacoplada. A continuación se detallan los endpoints que conectará el backend monolítico modular en la siguiente fase:
+        </p>
+
+        <div class="code-snippet">
+// 1. Ingesta y consentimiento
+POST  /api/v1/auth/consent                  -> HU01: Registro de aceptación
+POST  /api/v1/perceptual-data               -> HU04: Envío de encuesta bienestar
+
+// 2. Sincronización y Motor Lógico
+GET   /api/v1/academic/student/:id/summary  -> HU03: Notas y asistencia
+GET   /api/v1/rules-engine/pre-alerts       -> HU05: Pre-alertas deterministas
+
+// 3. Supervisión Humana
+PATCH /api/v1/alerts/:id/validate           -> HU06: Validación o descarte de alerta
+
+// 4. Analítica y Finanzas
+GET   /api/v1/analytics/dashboard           -> HU07: Indicadores directivos
+GET   /api/v1/finance/roi-simulation        -> HU10: Parámetros y simulación
+        </div>
+
+        <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted);">
+          📌 <strong>Ubicación de archivos del frontend:</strong> <code>index.html</code>, <code>css/styles.css</code>, <code>js/app.js</code>, y logos en carpeta <code>assets/</code>.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary modal-close-btn">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER DINÁMICO -->
+  <div class="toast-container"></div>
+
+  <!-- SCRIPT PRINCIPAL -->
+  <script src="js/app.js"></script>
+</body>
+</html>
+
