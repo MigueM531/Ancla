@@ -132,15 +132,16 @@ const ApiService = {
     */
     const state = getSavedData();
     const students = state.students;
-    const total = students.length;
+    const totalMonitored = students.length;
+
     const atRisk = students.filter(s => s.riskLevel === "Alto" || s.riskLevel === "Crítico").length;
     const pendingPreAlerts = students.filter(s => s.preAlert && s.preAlert.status === "Pendiente").length;
     const validatedAlerts = students.filter(s => s.preAlert && s.preAlert.status === "Validada").length;
-    const avgAttendance = Math.round(students.reduce((acc, s) => acc + s.attendanceRate, 0) / total);
-    const avgGPA = (students.reduce((acc, s) => acc + s.averageGrade, 0) / total).toFixed(2);
+    const avgAttendance = Math.round(students.reduce((acc, s) => acc + s.attendanceRate, 0) / (totalMonitored || 1));
+    const avgGPA = (students.reduce((acc, s) => acc + s.averageGrade, 0) / (totalMonitored || 1)).toFixed(2);
 
     return {
-      totalMonitored: total,
+      totalMonitored,
       studentsAtRisk: atRisk,
       pendingPreAlerts,
       validatedAlerts,

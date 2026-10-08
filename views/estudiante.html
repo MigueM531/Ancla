@@ -69,6 +69,8 @@
       </div>
     </aside>
 
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
     <!-- ===================================================================
          CONTENIDO PRINCIPAL
          =================================================================== -->
@@ -77,10 +79,14 @@
       <!-- TOPBAR SUPERIOR -->
       <header class="topbar">
         <div class="topbar-left">
+          <button class="mobile-menu-btn" id="btnToggleMobileMenu" title="Abrir Menú" aria-label="Abrir Menú">☰</button>
           <h1 class="page-title" id="pageTitle">Portal del Estudiante: Bienestar y Progreso</h1>
           <span class="context-tag">Universidad de Medellín • 2026-2</span>
         </div>
         <div class="topbar-right">
+          <button class="btn btn-secondary btn-sm" id="btnResetDemoData" title="Restablecer datos originales del prototipo" style="font-size: 0.76rem;">
+            🔄 Reset Demo
+          </button>
           <span style="font-size: 0.8rem; color: var(--text-secondary);">Módulo Estudiante</span>
         </div>
       </header>
@@ -125,7 +131,11 @@
 
           <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px;">
             <!-- Encuesta de Bienestar Estilo Typeform -->
-            <div class="survey-card">
+            <div class="survey-card" id="studentSurveyCard">
+              <div class="survey-disabled-notice" id="surveyDisabledNotice">
+                <span>🔒</span>
+                <span>Encuesta inactiva: Debes autorizar el consentimiento ético arriba para habilitar el registro de percepciones.</span>
+              </div>
               <div class="survey-progress-wrapper">
                 <div class="survey-step-indicator">
                   <span id="surveyQuestionNum">Paso 01</span>

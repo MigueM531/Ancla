@@ -20,8 +20,7 @@ const DirectivoApp = {
   },
 
   init() {
-    SharedApp.init("directivo");
-    SharedApp.bindNavigationTabs(this.titleMap);
+    SharedApp.init("directivo", this.titleMap);
     this.bindSimulatorSliders();
     this.renderExecutiveView();
     this.updateFinancialSimulation();

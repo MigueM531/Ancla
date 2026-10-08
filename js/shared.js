@@ -13,12 +13,14 @@
 const SharedApp = {
   currentRole: null,
 
-  init(role) {
+  init(role, titleMap = {}) {
     this.currentRole = role;
     this.syncCurrentRoleState();
     this.bindRoleSwitcher();
-    this.bindNavigationTabs();
+    this.bindNavigationTabs(titleMap);
     this.bindModalTriggers();
+    this.bindMobileMenu();
+    this.bindResetDemo();
     this.updatePendingAlertsBadge();
     this.renderUserInfo();
   },
@@ -203,6 +205,58 @@ const SharedApp = {
       badge.textContent = pendingCount;
     } catch (err) {
       console.warn("No se pudo actualizar el badge de alertas:", err);
+    }
+  },
+
+  /**
+   * Vincula la apertura y cierre del menú lateral en dispositivos móviles
+   */
+  bindMobileMenu() {
+    const btnToggle = document.getElementById("btnToggleMobileMenu");
+    const sidebar = document.querySelector(".sidebar");
+    const backdrop = document.getElementById("sidebarBackdrop");
+
+    if (btnToggle && sidebar) {
+      btnToggle.addEventListener("click", () => {
+        sidebar.classList.toggle("open");
+        if (backdrop) backdrop.classList.toggle("active");
+      });
+    }
+
+    if (backdrop && sidebar) {
+      backdrop.addEventListener("click", () => {
+        sidebar.classList.remove("open");
+        backdrop.classList.remove("active");
+      });
+    }
+
+    // Cerrar sidebar al hacer clic en un enlace en móvil
+    document.querySelectorAll(".nav-link").forEach((link) => {
+      link.addEventListener("click", () => {
+        if (window.innerWidth <= 768 && sidebar) {
+          sidebar.classList.remove("open");
+          if (backdrop) backdrop.classList.remove("active");
+        }
+      });
+    });
+  },
+
+  /**
+   * Permite restablecer los datos locales de prueba al estado inicial
+   */
+  bindResetDemo() {
+    const btnReset = document.getElementById("btnResetDemoData");
+    if (btnReset) {
+      btnReset.addEventListener("click", () => {
+        const confirmReset = window.confirm("¿Deseas restablecer todos los datos del prototipo al estado inicial de demostración?");
+        if (confirmReset) {
+          localStorage.removeItem("ancla_data_v1");
+          this.showToast("Datos de demostración reiniciados. Recargando...", "info");
+          setTimeout(() => {
+            window.location.reload();
+          }, 350);
+        }
+      });
     }
   }
 };

@@ -21,8 +21,7 @@ const EstudianteApp = {
   surveyAnswers: {},
 
   init() {
-    SharedApp.init("estudiante");
-    SharedApp.bindNavigationTabs(this.titleMap);
+    SharedApp.init("estudiante", this.titleMap);
     this.bindConsentToggle();
     this.renderStudentView();
   },
@@ -48,15 +47,21 @@ const EstudianteApp = {
     // Banner de consentimiento ético
     const consentStatusText = document.getElementById("consentStatusText");
     const btnConsent = document.getElementById("btnToggleConsent");
+    const surveyCard = document.getElementById("studentSurveyCard");
+    const disabledNotice = document.getElementById("surveyDisabledNotice");
 
     if (studentUser.privacyConsentAccepted) {
       consentStatusText.innerHTML = `Consentimiento activo desde <strong>${studentUser.consentDate || "el inicio de semestre"}</strong>. Tus datos son confidenciales y no punitivos.`;
       btnConsent.textContent = "Revocar Consentimiento";
       btnConsent.classList.replace("btn-primary", "btn-secondary");
+      if (surveyCard) surveyCard.classList.remove("disabled");
+      if (disabledNotice) disabledNotice.classList.remove("active");
     } else {
       consentStatusText.innerHTML = `<span style="color:var(--red-hover)">Consentimiento pendiente o revocado.</span> No recopilaremos datos emocionales hasta tu autorización.`;
       btnConsent.textContent = "Autorizar Consentimiento";
       btnConsent.classList.replace("btn-secondary", "btn-primary");
+      if (surveyCard) surveyCard.classList.add("disabled");
+      if (disabledNotice) disabledNotice.classList.add("active");
     }
 
     // Indicadores académicos del estudiante

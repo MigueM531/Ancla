@@ -74,6 +74,8 @@
       </div>
     </aside>
 
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
     <!-- ===================================================================
          CONTENIDO PRINCIPAL
          =================================================================== -->
@@ -82,10 +84,14 @@
       <!-- TOPBAR SUPERIOR -->
       <header class="topbar">
         <div class="topbar-left">
+          <button class="mobile-menu-btn" id="btnToggleMobileMenu" title="Abrir Menú" aria-label="Abrir Menú">☰</button>
           <h1 class="page-title" id="pageTitle">Bandeja de Supervisión y Validación de Pre-Alertas</h1>
           <span class="context-tag">Universidad de Medellín • 2026-2</span>
         </div>
         <div class="topbar-right">
+          <button class="btn btn-secondary btn-sm" id="btnResetDemoData" title="Restablecer datos originales del prototipo" style="font-size: 0.76rem;">
+            🔄 Reset Demo
+          </button>
           <span style="font-size: 0.8rem; color: var(--text-secondary);">Módulo Tutor / Bienestar</span>
         </div>
       </header>

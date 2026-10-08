@@ -609,6 +609,32 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.survey-card.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+  filter: grayscale(0.6);
+  user-select: none;
+}
+
+.survey-disabled-notice {
+  display: none;
+  background: rgba(230, 57, 70, 0.14);
+  border: 1px solid var(--red-primary);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: #ff7675;
+  font-size: 0.82rem;
+  margin-bottom: 16px;
+  font-weight: 500;
+  align-items: center;
+  gap: 8px;
+}
+
+.survey-disabled-notice.active {
+  display: flex;
 }
 
 .survey-progress-wrapper {
@@ -1077,6 +1103,41 @@ body {
   to { transform: translateX(0); opacity: 1; }
 }
 
+/* Botón móvil de navegación */
+.mobile-menu-btn {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-white);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: var(--transition);
+}
+
+.mobile-menu-btn:hover {
+  background: var(--bg-card);
+  border-color: var(--red-primary);
+}
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 95;
+}
+
+.sidebar-backdrop.active {
+  display: block;
+}
+
 /* ===================================================================
    RESPONSIVE DESIGN
    =================================================================== */
@@ -1087,9 +1148,16 @@ body {
 }
 
 @media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
   .sidebar {
     position: fixed;
-    left: -280px;
+    left: -285px;
+    z-index: 100;
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.6);
   }
   .sidebar.open {
     left: 0;

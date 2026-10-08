@@ -110,9 +110,9 @@ const RulesEngine = {
   processPreAlert(student) {
     const evaluation = this.evaluateStudent(student);
     
-    // Si activa alerta y el estudiante no tiene pre-alerta activa, crear una nueva
+    // Si activa alerta y el estudiante no tiene pre-alerta activa (o la previa fue descartada), crear una nueva
     if (evaluation.triggerAlert) {
-      if (!student.preAlert) {
+      if (!student.preAlert || student.preAlert.status === "Descartada") {
         const now = new Date();
         const dateStr = now.toISOString().replace("T", " ").substring(0, 16);
         student.preAlert = {

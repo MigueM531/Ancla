@@ -77,6 +77,8 @@
       </div>
     </aside>
 
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
     <!-- ===================================================================
          CONTENIDO PRINCIPAL
          =================================================================== -->
@@ -85,10 +87,14 @@
       <!-- TOPBAR SUPERIOR -->
       <header class="topbar">
         <div class="topbar-left">
+          <button class="mobile-menu-btn" id="btnToggleMobileMenu" title="Abrir Menú" aria-label="Abrir Menú">☰</button>
           <h1 class="page-title" id="pageTitle">Panel Directivo y Métricas de Permanencia</h1>
           <span class="context-tag">Universidad de Medellín • 2026-2</span>
         </div>
         <div class="topbar-right">
+          <button class="btn btn-secondary btn-sm" id="btnResetDemoData" title="Restablecer datos originales del prototipo" style="font-size: 0.76rem;">
+            🔄 Reset Demo
+          </button>
           <span style="font-size: 0.8rem; color: var(--text-secondary);">Módulo Ejecutivo</span>
         </div>
       </header>
@@ -105,8 +111,8 @@
           <div class="kpi-grid">
             <div class="kpi-card">
               <div class="kpi-title">Estudiantes Monitoreados</div>
-              <div class="kpi-value" id="kpiTotalMonitored">1,250</div>
-              <div class="kpi-detail">Facultad de Ingenierías (1° a 3° sem)</div>
+              <div class="kpi-value" id="kpiTotalMonitored">6</div>
+              <div class="kpi-detail">Padrón activo en seguimiento</div>
             </div>
 
             <div class="kpi-card" style="border-left-color: var(--red-primary);">

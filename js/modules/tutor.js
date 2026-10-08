@@ -20,8 +20,7 @@ const TutorApp = {
   selectedStudentForValidation: null,
 
   init() {
-    SharedApp.init("tutor");
-    SharedApp.bindNavigationTabs(this.titleMap);
+    SharedApp.init("tutor", this.titleMap);
     this.bindFilterTabs();
     this.bindValidationActions();
     this.renderTutorAlerts("all");
