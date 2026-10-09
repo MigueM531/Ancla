@@ -107,28 +107,48 @@ const RulesEngine = {
   /**
    * Genera o actualiza una Pre-Alerta para el flujo de validación humana (HU06)
    */
+  // Huella del estado evaluado: permite saber si los indicadores cambiaron desde un descarte
+  signature(ev) {
+    return `${ev.riskLevel}|${ev.reason}`;
+  },
+
   processPreAlert(student) {
-    const evaluation = this.evaluateStudent(student);
-    
-    // Si activa alerta y el estudiante no tiene pre-alerta activa (o la previa fue descartada), crear una nueva
-    if (evaluation.triggerAlert) {
-      if (!student.preAlert || student.preAlert.status === "Descartada") {
-        const now = new Date();
-        const dateStr = now.toISOString().replace("T", " ").substring(0, 16);
-        student.preAlert = {
-          id: `PAL-${Date.now().toString().slice(-4)}`,
-          date: dateStr,
-          ruleTriggered: evaluation.reason,
-          riskScore: evaluation.riskScore,
-          status: "Pendiente", // HU06: Requiere supervisión humana obligatoria
-          tutorNotes: "",
-          validatedBy: null,
-          validationDate: null
-        };
+    const ev = this.evaluateStudent(student);
+    const pa = student.preAlert;
+    const sig = this.signature(ev);
+    const now = new Date().toISOString().replace("T", " ").substring(0, 16);
+    const createAlert = () => {
+      student.preAlert = {
+        id: `PAL-${Date.now().toString().slice(-6)}`,
+        date: now,
+        ruleTriggered: ev.reason,
+        riskScore: ev.riskScore,
+        status: "Pendiente", // HU06: requiere supervisión humana obligatoria
+        tutorNotes: "",
+        validatedBy: null,
+        validationDate: null,
+        history: pa && pa.history ? pa.history : []
+      };
+    };
+
+    if (ev.triggerAlert) {
+      if (!pa) createAlert();
+      // Un descarte se respeta mientras los indicadores no cambien
+      else if (pa.status === "Descartada" && pa.dismissedSignature !== sig) createAlert();
+      else if (pa.status === "Pendiente") {
+        pa.ruleTriggered = ev.reason;
+        pa.riskScore = ev.riskScore;
       }
+    } else if (pa && pa.status === "Pendiente") {
+      // El estudiante se recuperó: se cierra la pre-alerta con trazabilidad
+      pa.status = "Descartada";
+      pa.tutorNotes = "Cerrada automáticamente: los indicadores volvieron a rangos esperados.";
+      pa.validatedBy = "Sistema ANCLA";
+      pa.validationDate = now;
+      pa.dismissedSignature = sig;
+      (pa.history = pa.history || []).push({ date: now, status: "Descartada", by: "Sistema ANCLA", notes: pa.tutorNotes });
     }
-    student.riskLevel = evaluation.riskLevel;
-    return evaluation;
+    student.riskLevel = ev.riskLevel; // el riesgo real nunca se oculta
+    return ev;
   }
 };
-

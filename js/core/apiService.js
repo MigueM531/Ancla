@@ -36,6 +36,11 @@ const ApiService = {
     if (state.users.student.id === studentId) {
       state.users.student.privacyConsentAccepted = accepted;
       state.users.student.consentDate = new Date().toISOString().replace("T", " ").substring(0, 16);
+      if (!accepted) {
+        // Revocar implica dejar de conservar datos emocionales y recalcular solo con datos académicos
+        const st = state.students.find(s => s.id === studentId);
+        if (st) { st.perceptions = null; RulesEngine.processPreAlert(st); }
+      }
       persistData(state);
     }
     return { success: true, accepted };
@@ -55,6 +60,9 @@ const ApiService = {
     return await res.json();
     */
     const state = getSavedData();
+    if (state.users.student.id === studentId && !state.users.student.privacyConsentAccepted) {
+      throw new Error("CONSENT_REQUIRED");
+    }
     const student = state.students.find(s => s.id === studentId);
     if (student) {
       student.perceptions = {
@@ -107,14 +115,18 @@ const ApiService = {
     const state = getSavedData();
     const student = state.students.find(s => s.id === studentId);
     if (student && student.preAlert) {
-      student.preAlert.status = decision; // "Validada" o "Descartada"
-      student.preAlert.tutorNotes = tutorNotes;
-      student.preAlert.validatedBy = tutorName;
-      student.preAlert.validationDate = new Date().toISOString().replace("T", " ").substring(0, 16);
-      
+      const pa = student.preAlert;
+      if (pa.status !== "Pendiente") throw new Error("Alerta ya resuelta");
+      pa.status = decision; // "Validada" o "Descartada"
+      pa.tutorNotes = tutorNotes;
+      pa.validatedBy = tutorName;
+      pa.validationDate = new Date().toISOString().replace("T", " ").substring(0, 16);
       if (decision === "Descartada") {
-        student.riskLevel = "Bajo"; // Se recalibra como falso positivo
+        // Se registra la huella: no se regenera mientras los indicadores no cambien.
+        // El nivel de riesgo real NO se modifica.
+        pa.dismissedSignature = RulesEngine.signature(RulesEngine.evaluateStudent(student));
       }
+      (pa.history = pa.history || []).push({ date: pa.validationDate, status: decision, by: tutorName, notes: tutorNotes });
       persistData(state);
       return { success: true, student };
     }
@@ -154,6 +166,64 @@ const ApiService = {
         critico: students.filter(s => s.riskLevel === "Crítico").length
       }
     };
+  },
+
+  // ---- HU02: permisos por rol y trazabilidad (la matriz de roles ahora se APLICA) ----
+  _currentRole() { return localStorage.getItem("ancla_current_role"); },
+
+  _assertPermission(key) {
+    const matrix = getSavedData().roleMatrix || ANCLA_DATA.roleMatrix;
+    const row = matrix.find((r) => r.key === key);
+    if (row && row[this._currentRole()] !== true) throw new Error("PERMISSION_DENIED");
+  },
+
+  _audit(state, action) {
+    const map = { directivo: "executive", tutor: "tutor", estudiante: "student", admin: "admin" };
+    const user = state.users[map[this._currentRole()]];
+    if (!state.auditLogs) state.auditLogs = JSON.parse(JSON.stringify(ANCLA_DATA.auditLogs));
+    state.auditLogs.unshift({
+      date: new Date().toISOString().replace("T", " ").substring(0, 16),
+      user: user ? user.name : "Desconocido",
+      action,
+      ip: "N/D (prototipo)"
+    });
+    state.auditLogs.length = Math.min(state.auditLogs.length, 100);
+  },
+
+  async getFinancialCosts() { await this._simulateLatency(); return getSavedData().costBreakdown || ANCLA_DATA.costBreakdown; },
+  async getFinancialScenarios() { await this._simulateLatency(); return getSavedData().financialScenarios || ANCLA_DATA.financialScenarios; },
+  async getRoleMatrix() { await this._simulateLatency(); return getSavedData().roleMatrix || ANCLA_DATA.roleMatrix; },
+  async getAuditLogs() { await this._simulateLatency(); return getSavedData().auditLogs || ANCLA_DATA.auditLogs; },
+
+  /**
+   * HU03: sincronización institucional (SIMULADA): reevalúa las reglas de todo el padrón.
+   * Respeta los descartes del tutor (no reabre alertas cuyos indicadores no cambiaron).
+   */
+  async syncAcademicData() {
+    this._assertPermission("sync_db");
+    await this._simulateLatency();
+    const state = getSavedData();
+    state.students.forEach((s) => RulesEngine.processPreAlert(s));
+    this._audit(state, "Sincronización institucional simulada: notas y asistencias reevaluadas (HU03)");
+    persistData(state);
+    return { success: true, studentsCount: state.students.length };
   }
 };
 
+// Permiso + auditoría para las operaciones sensibles
+const _AUDITED = {
+  submitPrivacyConsent: { perm: "own_consent", msg: (a) => `Consentimiento informado ${a[1] ? "autorizado" : "revocado"} (HU01)` },
+  submitPerceptions: { perm: "survey", msg: () => "Micro-encuesta de bienestar registrada (HU04)" },
+  validatePreAlert: { perm: "validate_alerts", msg: (a) => `Pre-alerta de ${a[0]} ${a[2] === "Validada" ? "validada" : "descartada"} (HU06)` }
+};
+Object.entries(_AUDITED).forEach(([name, cfg]) => {
+  const original = ApiService[name].bind(ApiService);
+  ApiService[name] = async (...args) => {
+    ApiService._assertPermission(cfg.perm);
+    const result = await original(...args);
+    const state = getSavedData();
+    ApiService._audit(state, cfg.msg(args));
+    persistData(state);
+    return result;
+  };
+});

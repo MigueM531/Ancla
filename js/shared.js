@@ -13,6 +13,59 @@
 const SharedApp = {
   currentRole: null,
 
+  escapeHtml(v) {
+    return String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  },
+
+  // "Crítico" -> "critico" (las clases CSS no llevan tilde)
+  riskClass(level) {
+    return String(level || "bajo").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  },
+
+  plural(n, singular, plural) {
+    return `${n} ${n === 1 ? singular : plural}`;
+  },
+
+  bindGlobalEvents() {
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") this.closeAllModals(); });
+    // Sincronización entre pestañas (el evento "storage" solo se dispara en las OTRAS pestañas)
+    window.addEventListener("storage", (e) => {
+      if (e.key !== STORAGE_KEY) return;
+      this.updatePendingAlertsBadge();
+      document.dispatchEvent(new CustomEvent("ancla:data-changed"));
+    });
+  },
+
+  /** Padrón de estudiantes (compartido por Directivo y Tutor) */
+  async renderStudentsTable(tbodyId = "allStudentsTableBody") {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    const esc = (v) => this.escapeHtml(v);
+    try {
+      const students = await ApiService.getStudents();
+      tbody.innerHTML = students.map((s) => {
+        const p = s.perceptions;
+        return `
+          <tr>
+            <td><div class="student-col">
+              <div class="user-avatar" style="width:32px; height:32px; font-size:0.75rem;">${esc(s.name.slice(0, 2).toUpperCase())}</div>
+              <div class="student-col-info"><h5>${esc(s.name)}</h5><span>${esc(s.id)} • ${esc(s.program)}</span></div>
+            </div></td>
+            <td><strong>${s.averageGrade.toFixed(1)}</strong> / 5.0</td>
+            <td><div style="display:flex; align-items:center; gap:8px;">
+              <span>${s.attendanceRate}%</span>
+              <div style="width:50px; height:4px; background:var(--bg-badge-gray); border-radius:2px; overflow:hidden;">
+                <div style="width:${s.attendanceRate}%; height:100%; background:${s.attendanceRate < 80 ? "var(--red-primary)" : "var(--status-low)"};"></div>
+              </div></div></td>
+            <td><div style="font-size:0.78rem; color:var(--text-secondary);">${p ? `Estrés: ${p.stressLevel} / 5 | Carga: ${p.academicLoad} / 5` : "Sin datos de bienestar"}</div></td>
+            <td><span class="badge-risk ${this.riskClass(s.riskLevel)}">${esc(s.riskLevel)}</span></td>
+          </tr>`;
+      }).join("");
+    } catch (err) {
+      console.error("Error al cargar estudiantes:", err);
+    }
+  },
+
   init(role, titleMap = {}) {
     this.currentRole = role;
     this.syncCurrentRoleState();
@@ -23,6 +76,7 @@ const SharedApp = {
     this.bindResetDemo();
     this.updatePendingAlertsBadge();
     this.renderUserInfo();
+    this.bindGlobalEvents();
   },
 
   /**
@@ -95,7 +149,7 @@ const SharedApp = {
    * Manejo de pestañas internas dentro del dashboard activo
    */
   bindNavigationTabs(titleMap = {}) {
-    const navLinks = document.querySelectorAll(".nav-link[data-view]");
+    const navLinks = document.querySelectorAll("[data-view]");
     navLinks.forEach((link) => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
@@ -153,7 +207,11 @@ const SharedApp = {
 
   openModal(modalId) {
     const modal = document.getElementById(modalId);
-    if (modal) modal.classList.add("show");
+    if (modal) {
+      modal.classList.add("show");
+      modal.setAttribute("role", "dialog");
+      modal.setAttribute("aria-modal", "true");
+    }
   },
 
   closeAllModals() {
@@ -178,10 +236,11 @@ const SharedApp = {
     if (type === "success") toast.style.borderLeftColor = "var(--status-low)";
     if (type === "danger") toast.style.borderLeftColor = "var(--red-primary)";
 
-    toast.innerHTML = `
-      <span>${type === "success" ? "✓" : type === "warning" ? "⚠️" : type === "danger" ? "✕" : "ℹ️"}</span>
-      <span>${message}</span>
-    `;
+    const icon = document.createElement("span");
+    icon.textContent = type === "success" ? "✓" : type === "warning" ? "⚠️" : type === "danger" ? "✕" : "ℹ️";
+    const msg = document.createElement("span");
+    msg.textContent = message; // textContent: evita inyección de HTML
+    toast.append(icon, msg);
 
     container.appendChild(toast);
 
@@ -250,7 +309,7 @@ const SharedApp = {
       btnReset.addEventListener("click", () => {
         const confirmReset = window.confirm("¿Deseas restablecer todos los datos del prototipo al estado inicial de demostración?");
         if (confirmReset) {
-          localStorage.removeItem("ancla_data_v1");
+          localStorage.removeItem(STORAGE_KEY);
           this.showToast("Datos de demostración reiniciados. Recargando...", "info");
           setTimeout(() => {
             window.location.reload();

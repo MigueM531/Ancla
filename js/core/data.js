@@ -4,6 +4,8 @@
  * Universidad de Medellín - Facultad de Ingenierías
  */
 
+const STORAGE_KEY = "ancla_data_v3"; // v3: matriz de roles, auditoría, costos y escenarios
+
 const ANCLA_DATA = {
   projectInfo: {
     name: "ANCLA",
@@ -42,7 +44,7 @@ const ANCLA_DATA = {
       role: "tutor",
       roleLabel: "Tutor / Profesional de Bienestar",
       department: "Bienestar Universitario & Consejería",
-      assignedStudentsCount: 42,
+      assignedStudentsCount: 6,
       avatar: "CV"
     },
     executive: {
@@ -53,6 +55,16 @@ const ANCLA_DATA = {
       roleLabel: "Directivo / Coordinador Académico",
       department: "Decanatura de Ingenierías",
       avatar: "RR"
+    },
+    // Rol de soporte: figura en la matriz de permisos; el prototipo no incluye una vista para él
+    admin: {
+      id: "ADM-001",
+      name: "Ing. Miguel Martínez",
+      email: "admin@udemellin.edu.co",
+      role: "admin",
+      roleLabel: "Administrador de Sistemas",
+      department: "TI & Arquitectura de Software",
+      avatar: "MM"
     }
   },
 
@@ -129,7 +141,7 @@ const ANCLA_DATA = {
         { name: "Química General", grade: 2.7, attendance: 82 },
         { name: "Cálculo Integral", grade: 3.0, attendance: 85 }
       ],
-      riskLevel: "Alto",
+      riskLevel: "Crítico",
       preAlert: {
         id: "PAL-002",
         date: "2026-10-06 09:15",
@@ -158,7 +170,7 @@ const ANCLA_DATA = {
         { name: "Estática", grade: 2.9, attendance: 76 },
         { name: "Topografía", grade: 3.4, attendance: 80 }
       ],
-      riskLevel: "Medio",
+      riskLevel: "Alto",
       preAlert: {
         id: "PAL-003",
         date: "2026-10-03 16:40",
@@ -208,7 +220,7 @@ const ANCLA_DATA = {
         { name: "Circuitos I", grade: 3.1, attendance: 70 },
         { name: "Física de Campos", grade: 3.6, attendance: 74 }
       ],
-      riskLevel: "Alto",
+      riskLevel: "Crítico",
       preAlert: {
         id: "PAL-004",
         date: "2026-10-02 11:30",
@@ -221,12 +233,139 @@ const ANCLA_DATA = {
     }
   ],
 
+  // Matriz de Control de Acceso por Roles y Privilegios (HU02)
+  roleMatrix: [
+    {
+      key: "own_consent",
+      permission: "Consultar y aceptar consentimiento informado propio",
+      estudiante: true,
+      tutor: false,
+      directivo: false,
+      admin: true
+    },
+    {
+      key: "survey",
+      permission: "Completar micro-encuestas de bienestar tipo Typeform",
+      estudiante: true,
+      tutor: false,
+      directivo: false,
+      admin: false
+    },
+    {
+      key: "view_grades",
+      permission: "Visualizar notas y asistencias personales",
+      estudiante: true,
+      tutor: true,
+      directivo: true,
+      admin: true
+    },
+    {
+      key: "validate_alerts",
+      permission: "Recibir y validar pre-alertas de deserción (Supervisión Humana)",
+      estudiante: false,
+      tutor: true,
+      directivo: false,
+      admin: false
+    },
+    {
+      key: "view_dashboard",
+      permission: "Acceder al Dashboard macro de permanencia y KPIs",
+      estudiante: false,
+      tutor: true,
+      directivo: true,
+      admin: true
+    },
+    {
+      key: "view_financial",
+      permission: "Ejecutar Simulador Financiero de Retorno (ROI) y Costos",
+      estudiante: false,
+      tutor: false,
+      directivo: true,
+      admin: true
+    },
+    {
+      key: "sync_db",
+      permission: "Sincronizar datos académicos institucionales (HU03)",
+      estudiante: false,
+      tutor: false,
+      directivo: true,
+      admin: true
+    },
+    {
+      key: "config_rules",
+      permission: "Configurar umbrales deterministas del motor de reglas",
+      estudiante: false,
+      tutor: false,
+      directivo: false,
+      admin: true
+    }
+  ],
+
+  // Registros de auditoría de consentimiento y accesos (HU01, HU02)
+  auditLogs: [
+    { date: "2026-10-08 08:30", user: "Alejandra Escobar", action: "Consentimiento informado aceptado (HU01)", ip: "172.16.24.12" },
+    { date: "2026-10-08 09:15", user: "Dr. Carlos Valderrama", action: "Validación de pre-alerta PAL-003 completada (HU06)", ip: "172.16.10.05" },
+    { date: "2026-10-08 10:45", user: "Ing. Roberto Restrepo", action: "Consulta del Dashboard Ejecutivo y ROI (HU07)", ip: "172.16.02.18" },
+    { date: "2026-10-08 11:20", user: "Alejandra Escobar", action: "Ingesta de micro-encuesta semanal de bienestar (HU04)", ip: "172.16.24.12" }
+  ],
+
+  // Análisis de Costos y Viabilidad Financiera (HU09)
+  costBreakdown: {
+    initialInvestmentCOP: 35000000, // Costo de diseño y desarrollo inicial
+    annualOperationalTotalCOP: 42000000,
+    items: [
+      {
+        category: "Infraestructura Cloud SaaS",
+        name: "Servidores, Base de Datos Relacional y Cifrado",
+        annualCOP: 14000000,
+        description: "Alojamiento en nube de alta disponibilidad, backups automáticos y cumplimiento de Ley 1581 (Habeas Data)."
+      },
+      {
+        category: "Mantenimiento & Soporte",
+        name: "Soporte Técnico Continuo y Actualización de Reglas",
+        annualCOP: 12000000,
+        description: "Monitoreo del motor de umbrales deterministas, ajustes de seguridad e integraciones semestrales."
+      },
+      {
+        category: "Acompañamiento Humano",
+        name: "Plataforma de Consejería y Bienestar Universitario",
+        annualCOP: 16000000,
+        description: "Horas dedicadas de tutores para supervisión obligatoria de pre-alertas e intervención preventiva temprana."
+      }
+    ]
+  },
+
+  // Escenarios predefinidos para la Simulación Financiera (HU10)
+  financialScenarios: {
+    conservador: {
+      totalStudents: 1250,
+      baselineDropoutRate: 14.0,
+      semesterTuitionCOP: 6800000,
+      interventionSuccessRate: 20,
+      annualPlatformCostCOP: 42000000
+    },
+    moderado: {
+      totalStudents: 1250,
+      baselineDropoutRate: 16.5,
+      semesterTuitionCOP: 6800000,
+      interventionSuccessRate: 35,
+      annualPlatformCostCOP: 42000000
+    },
+    optimo: {
+      totalStudents: 1500,
+      baselineDropoutRate: 18.0,
+      semesterTuitionCOP: 7200000,
+      interventionSuccessRate: 50,
+      annualPlatformCostCOP: 45000000
+    }
+  },
+
   // Parámetros por defecto para simulación financiera (HU09, HU10)
   financialModel: {
     totalStudents: 1250,          // Estudiantes en primeros semestres
     baselineDropoutRate: 16.5,    // Tasa de deserción histórica (%)
     semesterTuitionCOP: 6800000,  // Matrícula promedio semestral en COP ($6.8M COP)
-    interventionSuccessRate: 35,  // % de casos en riesgo rescatados gracias a Ancla
+    interventionSuccessRate: 30,  // % de casos en riesgo rescatados gracias a Ancla
     annualPlatformCostCOP: 42000000 // Costo operativo anual SaaS/infraestructura en COP
   },
 
@@ -287,20 +426,19 @@ const ANCLA_DATA = {
   ]
 };
 
-// Funciones auxiliares para almacenamiento local (mock offline/local storage)
+// Almacenamiento local (mock). Siempre devuelve una copia: la semilla nunca se muta.
+try { localStorage.removeItem("ancla_data_v1"); localStorage.removeItem("ancla_data_v2"); } catch (e) { /* ignorar */ }
+
 function getSavedData() {
-  const local = localStorage.getItem("ancla_data_v1");
-  if (local) {
-    try {
-      return JSON.parse(local);
-    } catch (e) {
-      console.warn("Error leyendo datos locales, usando semilla inicial.");
-    }
+  try {
+    const local = localStorage.getItem(STORAGE_KEY);
+    if (local) return JSON.parse(local);
+  } catch (e) {
+    console.warn("Error leyendo datos locales, usando semilla inicial.");
   }
-  return ANCLA_DATA;
+  return JSON.parse(JSON.stringify(ANCLA_DATA));
 }
 
 function persistData(data) {
-  localStorage.setItem("ancla_data_v1", JSON.stringify(data));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
-

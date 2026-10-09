@@ -23,6 +23,11 @@ const TutorApp = {
     SharedApp.init("tutor", this.titleMap);
     this.bindFilterTabs();
     this.bindValidationActions();
+    document.addEventListener("ancla:data-changed", () => {
+      const b = document.querySelector(".alert-filter-btn.active");
+      this.renderTutorAlerts(b ? b.dataset.filter : "all");
+      this.renderAllStudentsTable();
+    });
     this.renderTutorAlerts("all");
     this.renderAllStudentsTable();
   },
@@ -63,7 +68,6 @@ const TutorApp = {
     try {
       const students = await ApiService.getStudents();
       const tbody = document.getElementById("tutorAlertsTableBody");
-      const badgeCount = document.getElementById("pendingAlertsCountBadge");
 
       let filtered = students.filter((s) => s.preAlert !== null);
 
@@ -74,9 +78,6 @@ const TutorApp = {
       } else if (filter === "dismissed") {
         filtered = filtered.filter((s) => s.preAlert.status === "Descartada");
       }
-
-      const pendingCount = students.filter((s) => s.preAlert && s.preAlert.status === "Pendiente").length;
-      if (badgeCount) badgeCount.textContent = pendingCount;
 
       if (!tbody) return;
 
@@ -105,35 +106,35 @@ const TutorApp = {
           <tr>
             <td>
               <div class="student-col">
-                <div class="user-avatar" style="width:34px; height:34px; font-size:0.75rem;">${s.name.slice(0, 2).toUpperCase()}</div>
+                <div class="user-avatar" style="width:34px; height:34px; font-size:0.75rem;">${SharedApp.escapeHtml(s.name.slice(0, 2).toUpperCase())}</div>
                 <div class="student-col-info">
-                  <h5>${s.name}</h5>
-                  <span>${s.program} • Sem ${s.semester}</span>
+                  <h5>${SharedApp.escapeHtml(s.name)}</h5>
+                  <span>${SharedApp.escapeHtml(s.program)} • Sem ${Number(s.semester)}</span>
                 </div>
               </div>
             </td>
             <td>
-              <span class="badge-risk ${s.riskLevel.toLowerCase()}">${s.riskLevel}</span>
+              <span class="badge-risk ${SharedApp.riskClass(s.riskLevel)}">${SharedApp.escapeHtml(s.riskLevel)}</span>
             </td>
             <td>
               <div style="font-size:0.8rem; color:var(--text-primary); max-width:240px; line-height:1.3;">
-                ${pa.ruleTriggered}
+                ${SharedApp.escapeHtml(pa.ruleTriggered)}
               </div>
               <div style="font-size:0.7rem; color:var(--text-muted); margin-top:3px;">
-                Generada: ${pa.date}
+                Generada: ${SharedApp.escapeHtml(pa.date)}
               </div>
             </td>
             <td>
-              <span class="${statusBadgeClass}">${pa.status}</span>
+              <span class="${statusBadgeClass}">${SharedApp.escapeHtml(pa.status)}</span>
             </td>
             <td>
               <div style="font-size:0.8rem; color:var(--text-secondary); max-width:180px;">
-                ${pa.tutorNotes || "<em>Sin notas aún</em>"}
+                ${pa.tutorNotes ? SharedApp.escapeHtml(pa.tutorNotes) : "<em>Sin notas aún</em>"}
               </div>
             </td>
             <td style="text-align:right;">
               <button class="btn btn-sm ${pa.status === 'Pendiente' ? 'btn-primary' : 'btn-secondary'}" 
-                      onclick="TutorApp.openValidationModal('${s.id}')">
+                      onclick="TutorApp.openValidationModal('${SharedApp.escapeHtml(s.id)}')">
                 ${pa.status === "Pendiente" ? "Supervisar / Validar" : "Ver Registro"}
               </button>
             </td>
@@ -149,50 +150,8 @@ const TutorApp = {
   /**
    * Renderiza el padrón de todos los estudiantes
    */
-  async renderAllStudentsTable() {
-    const tbody = document.getElementById("allStudentsTableBody");
-    if (!tbody) return;
-
-    try {
-      const students = await ApiService.getStudents();
-      tbody.innerHTML = students
-        .map((s) => {
-          return `
-          <tr>
-            <td>
-              <div class="student-col">
-                <div class="user-avatar" style="width:32px; height:32px; font-size:0.75rem;">${s.name.slice(0, 2).toUpperCase()}</div>
-                <div class="student-col-info">
-                  <h5>${s.name}</h5>
-                  <span>${s.id} • ${s.program}</span>
-                </div>
-              </div>
-            </td>
-            <td><strong>${s.averageGrade.toFixed(1)}</strong> / 5.0</td>
-            <td>
-              <div style="display:flex; align-items:center; gap:8px;">
-                <span>${s.attendanceRate}%</span>
-                <div style="width:50px; height:4px; background:var(--bg-badge-gray); border-radius:2px; overflow:hidden;">
-                  <div style="width:${s.attendanceRate}%; height:100%; background:${s.attendanceRate < 80 ? 'var(--red-primary)' : 'var(--status-low)'};"></div>
-                </div>
-              </div>
-            </td>
-            <td>
-              <div style="font-size:0.78rem; color:var(--text-secondary);">
-                Estrés: ${s.perceptions ? s.perceptions.stressLevel : '-'} / 5 | 
-                Carga: ${s.perceptions ? s.perceptions.academicLoad : '-'} / 5
-              </div>
-            </td>
-            <td>
-              <span class="badge-risk ${s.riskLevel.toLowerCase()}">${s.riskLevel}</span>
-            </td>
-          </tr>
-        `;
-        })
-        .join("");
-    } catch (err) {
-      console.error("Error al cargar padrón de estudiantes:", err);
-    }
+  renderAllStudentsTable() {
+    return SharedApp.renderStudentsTable();
   },
 
   /**
@@ -212,9 +171,17 @@ const TutorApp = {
       document.getElementById("modalAcademicStats").innerHTML = `
         <strong>Promedio:</strong> ${student.averageGrade.toFixed(1)} | 
         <strong>Asistencia:</strong> ${student.attendanceRate}% | 
-        <strong>Estrés reportado:</strong> ${student.perceptions.stressLevel}/5
+        <strong>Estrés reportado:</strong> ${student.perceptions ? student.perceptions.stressLevel + "/5" : "Sin datos (sin consentimiento)"}
       `;
       document.getElementById("tutorNotesInput").value = student.preAlert.tutorNotes || "";
+
+      // Una alerta ya resuelta es de solo lectura (queda el historial)
+      const resolved = student.preAlert.status !== "Pendiente";
+      document.getElementById("tutorNotesInput").readOnly = resolved;
+      ["btnConfirmAlert", "btnDismissAlert"].forEach((id) => {
+        const b = document.getElementById(id);
+        if (b) b.style.display = resolved ? "none" : "";
+      });
 
       SharedApp.openModal("modalValidation");
     } catch (err) {
@@ -237,7 +204,7 @@ const TutorApp = {
     }
 
     // Descarte por falso positivo asigna automáticamente la nota
-    const finalNotes = decision === "Descartada" ? "Falso Positivo" : notesInput;
+    const finalNotes = decision === "Descartada" ? (notesInput ? `Falso positivo: ${notesInput}` : "Falso positivo") : notesInput;
 
     const data = getSavedData();
     const tutorName = data.users.tutor.name;
@@ -255,7 +222,7 @@ const TutorApp = {
       SharedApp.showToast(
         decision === "Validada"
           ? "Pre-alerta confirmada. Caso canalizado a Bienestar Estudiantil."
-          : "Pre-alerta descartada como falso positivo. Indicador calibrado.",
+          : "Pre-alerta descartada como falso positivo. Queda registrada y no se regenerará mientras los indicadores no cambien.",
         "success"
       );
 

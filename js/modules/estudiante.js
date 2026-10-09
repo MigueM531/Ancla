@@ -51,7 +51,7 @@ const EstudianteApp = {
     const disabledNotice = document.getElementById("surveyDisabledNotice");
 
     if (studentUser.privacyConsentAccepted) {
-      consentStatusText.innerHTML = `Consentimiento activo desde <strong>${studentUser.consentDate || "el inicio de semestre"}</strong>. Tus datos son confidenciales y no punitivos.`;
+      consentStatusText.innerHTML = `Consentimiento activo desde <strong>${SharedApp.escapeHtml(studentUser.consentDate || "el inicio de semestre")}</strong>. Tus datos son confidenciales y no punitivos.`;
       btnConsent.textContent = "Revocar Consentimiento";
       btnConsent.classList.replace("btn-primary", "btn-secondary");
       if (surveyCard) surveyCard.classList.remove("disabled");
@@ -68,7 +68,7 @@ const EstudianteApp = {
     document.getElementById("studentAvgGrade").textContent = studentData.averageGrade.toFixed(1);
     document.getElementById("studentAttendance").textContent = `${studentData.attendanceRate}%`;
     document.getElementById("studentRiskBadge").textContent = `Riesgo: ${studentData.riskLevel}`;
-    document.getElementById("studentRiskBadge").className = `badge-risk ${studentData.riskLevel.toLowerCase()}`;
+    document.getElementById("studentRiskBadge").className = `badge-risk ${SharedApp.riskClass(studentData.riskLevel)}`;
 
     // Cursos inscritos
     const coursesContainer = document.getElementById("studentCoursesList");
@@ -78,7 +78,7 @@ const EstudianteApp = {
           (c) => `
         <div class="finance-item">
           <div>
-            <span style="color:var(--text-white); font-weight:600;">${c.name}</span>
+            <span style="color:var(--text-white); font-weight:600;">${SharedApp.escapeHtml(c.name)}</span>
             <div style="font-size:0.75rem; color:var(--text-muted);">Asistencia: ${c.attendance}%</div>
           </div>
           <div>
@@ -92,7 +92,7 @@ const EstudianteApp = {
 
     // Iniciar encuesta de bienestar
     this.surveyStep = 0;
-    this.surveyAnswers = { ...studentData.perceptions };
+    this.surveyAnswers = {}; // nunca se precargan respuestas antiguas: cada pulso es una respuesta nueva
     this.renderSurveyStep();
   },
 
@@ -165,6 +165,10 @@ const EstudianteApp = {
       btnNext.textContent = "Siguiente →";
       btnNext.className = "btn btn-secondary";
       btnNext.onclick = () => {
+        if (!this.surveyAnswers[q.id]) {
+          SharedApp.showToast("Selecciona una opción para continuar.", "warning");
+          return;
+        }
         if (this.surveyStep < total - 1) {
           this.surveyStep++;
           this.renderSurveyStep();
@@ -185,13 +189,24 @@ const EstudianteApp = {
       return;
     }
 
+    const missing = ANCLA_DATA.surveyQuestions.findIndex((q) => !this.surveyAnswers[q.id]);
+    if (missing !== -1) {
+      SharedApp.showToast("Responde todas las preguntas antes de guardar.", "warning");
+      this.surveyStep = missing;
+      this.renderSurveyStep();
+      return;
+    }
+
     try {
       await ApiService.submitPerceptions(studentUser.id, this.surveyAnswers);
       SharedApp.showToast("¡Respuestas registradas! Tu bienestar es nuestra prioridad formativa.", "success");
       this.renderStudentView();
       SharedApp.updatePendingAlertsBadge();
     } catch (err) {
-      SharedApp.showToast("Error al guardar la encuesta de bienestar", "danger");
+      SharedApp.showToast(
+        err.message === "CONSENT_REQUIRED" ? "Debes aceptar el consentimiento de privacidad primero." : "Error al guardar la encuesta de bienestar",
+        err.message === "CONSENT_REQUIRED" ? "warning" : "danger"
+      );
     }
   },
 

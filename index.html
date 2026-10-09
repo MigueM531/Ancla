@@ -178,16 +178,24 @@
     </div>
 
     <div class="launcher-footer">
-      Redirigiendo automáticamente a tu última vista activa...
+      <span id="launcherFooter">Elige tu perfil para continuar.</span>
     </div>
   </div>
 
   <script>
-    // Redirección inteligente al último rol activo (por defecto: directivo)
-    const savedRole = localStorage.getItem("ancla_current_role") || "directivo";
-    setTimeout(() => {
-      window.location.replace(`views/${savedRole}.html`);
-    }, 450);
+    // Retoma la última vista solo si el rol guardado es válido; el usuario puede cancelar
+    const ROLES = ["directivo", "tutor", "estudiante"];
+    const saved = localStorage.getItem("ancla_current_role");
+    const footer = document.getElementById("launcherFooter");
+    if (ROLES.includes(saved)) {
+      const timer = setTimeout(() => window.location.replace(`views/${saved}.html`), 3000);
+      footer.innerHTML = `Retomando tu última vista (<strong>${saved}</strong>) en 3 s… <a href="#" id="cancelRedirect" style="color:var(--red-hover)">Cancelar</a>`;
+      document.getElementById("cancelRedirect").addEventListener("click", (e) => {
+        e.preventDefault();
+        clearTimeout(timer);
+        footer.textContent = "Elige tu perfil para continuar.";
+      });
+    }
   </script>
 </body>
 </html>

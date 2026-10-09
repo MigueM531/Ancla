@@ -1,19 +1,17 @@
 /**
  * ANCLA - Servidor Local de Desarrollo (Zero-Dependencies)
  * Universidad de Medellín - Facultad de Ingenierías
- * 
- * Permite levantar el proyecto en http://localhost:3000 con soporte completo
- * de rutas limpias, tipos MIME y conexión entre dashboards sin necesidad
- * de librerías externas o comandos complejos.
+ *
+ * Sirve únicamente index.html y las carpetas css/, js/, views/ y assets/.
+ * No expone server.js, package.json, .git ni archivos ocultos.
  */
-
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const url = require("url");
 
 const PORT = process.env.PORT || 3000;
 const ROOT_DIR = __dirname;
+const PUBLIC_DIRS = ["css", "js", "views", "assets"];
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -30,7 +28,6 @@ const MIME_TYPES = {
   ".ttf": "font/ttf"
 };
 
-// Rutas amigables para navegación directa
 const ROUTE_ALIASES = {
   "/": "/index.html",
   "/directivo": "/views/directivo.html",
@@ -38,73 +35,69 @@ const ROUTE_ALIASES = {
   "/estudiante": "/views/estudiante.html"
 };
 
+const escapeHtml = (v) =>
+  String(v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function send(res, code, body, type = "text/html; charset=utf-8") {
+  res.writeHead(code, { "Content-Type": type, "X-Content-Type-Options": "nosniff" });
+  res.end(body);
+}
+
+function notFound(res, pathname) {
+  send(res, 404, `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><title>404 - No Encontrado | ANCLA</title>
+<style>
+  body { font-family: sans-serif; background: #0f1117; color: #f0f2f8; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0; }
+  h1 { color: #e63946; margin-bottom: 8px; }
+  a { color: #55efc4; text-decoration:none; margin-top: 16px; font-weight: bold; }
+</style></head>
+<body>
+  <h1>404 • Recurso no encontrado</h1>
+  <p>La ruta <code>${escapeHtml(pathname)}</code> no existe en el proyecto.</p>
+  <a href="/">← Volver al inicio de ANCLA</a>
+</body></html>`);
+}
+
 const server = http.createServer((req, res) => {
-  const parsedUrl = url.parse(req.url);
-  let pathname = decodeURIComponent(parsedUrl.pathname);
-
-  // Aplicar alias de rutas si existe
-  if (ROUTE_ALIASES[pathname]) {
-    pathname = ROUTE_ALIASES[pathname];
+  let pathname;
+  try {
+    pathname = decodeURIComponent(new URL(req.url, "http://localhost").pathname);
+  } catch (e) {
+    return send(res, 400, "400 - Solicitud inválida", "text/plain; charset=utf-8");
   }
+  if (pathname.includes("\0")) return send(res, 400, "400 - Solicitud inválida", "text/plain; charset=utf-8");
 
-  // Prevenir ataques de Directory Traversal
-  const safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, "");
-  let filePath = path.join(ROOT_DIR, safePath);
+  if (ROUTE_ALIASES[pathname]) pathname = ROUTE_ALIASES[pathname];
 
-  // Si es un directorio, buscar index.html
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-    filePath = path.join(filePath, "index.html");
+  const rel = path.posix.normalize(pathname).replace(/^\/+/, "");
+  const segments = rel.split("/");
+  const allowed = rel === "index.html" || PUBLIC_DIRS.includes(segments[0]);
+  const filePath = path.join(ROOT_DIR, rel);
+
+  if (!allowed || segments.some((s) => s.startsWith(".")) || !filePath.startsWith(ROOT_DIR + path.sep)) {
+    return notFound(res, pathname);
   }
 
   fs.stat(filePath, (err, stats) => {
-    if (err || !stats.isFile()) {
-      res.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
-      res.end(`
-        <!DOCTYPE html>
-        <html lang="es">
-        <head>
-          <meta charset="UTF-8">
-          <title>404 - No Encontrado | ANCLA</title>
-          <style>
-            body { font-family: sans-serif; background: #0f1117; color: #f0f2f8; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0; }
-            h1 { color: #e63946; margin-bottom: 8px; }
-            a { color: #55efc4; text-decoration:none; margin-top: 16px; font-weight: bold; }
-          </style>
-        </head>
-        <body>
-          <h1>404 • Recurso no encontrado</h1>
-          <p>La ruta <code>${pathname}</code> no existe en el proyecto.</p>
-          <a href="/">← Volver al inicio de ANCLA</a>
-        </body>
-        </html>
-      `);
-      return;
-    }
+    if (err || !stats.isFile()) return notFound(res, pathname);
 
-    const ext = path.extname(filePath).toLowerCase();
-    const contentType = MIME_TYPES[ext] || "application/octet-stream";
-
+    const contentType = MIME_TYPES[path.extname(filePath).toLowerCase()] || "application/octet-stream";
+    const stream = fs.createReadStream(filePath);
+    stream.on("error", () => {
+      if (!res.headersSent) send(res, 500, "500 - Error interno", "text/plain; charset=utf-8");
+      else res.destroy();
+    });
     res.writeHead(200, {
       "Content-Type": contentType,
-      "Cache-Control": "no-cache, no-store, must-revalidate"
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      "X-Content-Type-Options": "nosniff"
     });
-
-    const fileStream = fs.createReadStream(filePath);
-    fileStream.pipe(res);
+    stream.pipe(res);
   });
 });
 
 server.listen(PORT, () => {
-  console.log("\n========================================================");
-  console.log(" ⚓ ANCLA - Sistema de Monitoreo y Permanencia");
-  console.log(" Facultad de Ingenierías • Universidad de Medellín");
-  console.log("========================================================");
-  console.log(` Servidor localhost iniciado con éxito en:`);
-  console.log(` 👉 http://localhost:${PORT}`);
-  console.log("========================================================");
-  console.log(" Vistas directas:");
-  console.log(` • Directivo:  http://localhost:${PORT}/directivo`);
-  console.log(` • Tutor:      http://localhost:${PORT}/tutor`);
-  console.log(` • Estudiante: http://localhost:${PORT}/estudiante`);
-  console.log("========================================================\n");
+  console.log("\n⚓ ANCLA - Sistema de Monitoreo y Permanencia");
+  console.log(`👉 http://localhost:${PORT}`);
+  console.log(`   /directivo  /tutor  /estudiante\n`);
 });

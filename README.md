@@ -83,7 +83,14 @@ El proyecto también funciona abriendo directamente cualquier archivo `.html` en
 
 ## 🔄 Conexión y Sincronización entre Dashboards
 
-Todos los dashboards están interconectados en tiempo real a través del almacén compartido de datos:
+Los dashboards comparten un almacén de datos (`localStorage`). Los cambios se ven al navegar entre vistas y, con varias pestañas abiertas, se actualizan solos (evento `storage`). En modo `file://` algunos navegadores (p. ej. Firefox) aíslan el almacenamiento por archivo: para la demo usa `npm start`.
+
+### Módulos integrados desde la rama Branch2A (pestañas del panel Directivo)
+Se mantiene el flujo original de navegación (selector de rol + pestañas internas). El panel Directivo incluye: **Dashboard** (permanencia por programa y casos críticos), **Gestión Financiera & ROI** (HU09/HU10: costos y escenarios), **Padrón Académico & DB** (HU03: filtros y sincronización simulada), **Privacidad & Roles** (HU01/HU02: matriz de permisos aplicada por `ApiService` y auditoría) y **Arquitectura & BPMN**. El rol Administrador consta en la matriz, pero el prototipo no incluye una vista para él.
+
+Pruebas de la lógica de negocio: `npm test`.
+
+Detalle de la sincronización:
 1. **Selector de Rol en el Sidebar:** En cualquier dashboard puedes usar el menú desplegable para cambiar entre Directivo, Tutor y Estudiante; la interfaz navegará automáticamente a la vista correspondiente.
 2. **Sincronización de Datos:**
    * Si el **Tutor** valida o descarta una pre-alerta como "Falso Positivo" en su bandeja, al pasar a la vista de **Directivo** los KPIs y la distribución de riesgo se actualizan inmediatamente.

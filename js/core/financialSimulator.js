@@ -16,23 +16,24 @@ const FinancialSimulator = {
       baselineDropoutRate = 16.5,
       semesterTuitionCOP = 6800000,
       interventionSuccessRate = 30,
-      annualPlatformCostCOP = 42000000
+      annualPlatformCostCOP = 42000000,
+      semestersLostPerDropout = 2 // Supuesto documentado: semestres de matrícula perdidos por cada deserción
     } = params;
 
     // 1. Estudiantes proyectados en riesgo de abandono escolar
     const projectedDropoutStudents = Math.round(totalStudents * (baselineDropoutRate / 100));
 
     // 2. Pérdida institucional sin intervención preventiva (2 semestres/año)
-    const annualLossWithoutIntervention = projectedDropoutStudents * (semesterTuitionCOP * 2);
+    const annualLossWithoutIntervention = projectedDropoutStudents * (semesterTuitionCOP * semestersLostPerDropout);
 
     // 3. Estudiantes retenidos efectivamente gracias al acompañamiento temprano de ANCLA
     const studentsRetained = Math.round(projectedDropoutStudents * (interventionSuccessRate / 100));
 
     // 4. Ingresos por matrículas preservadas para la Universidad
-    const annualRevenuePreserved = studentsRetained * (semesterTuitionCOP * 2);
+    const annualRevenuePreserved = studentsRetained * (semesterTuitionCOP * semestersLostPerDropout);
 
     // 5. Beneficio Económico Neto tras deducir el costo del sistema SaaS
-    const netEconomicBenefit = Math.max(0, annualRevenuePreserved - annualPlatformCostCOP);
+    const netEconomicBenefit = annualRevenuePreserved - annualPlatformCostCOP;
 
     // 6. Retorno sobre la Inversión (ROI %)
     const roiPercentage = annualPlatformCostCOP > 0 
@@ -42,7 +43,7 @@ const FinancialSimulator = {
     // 7. Costo institucional por estudiante rescatado/retenido
     const costPerRetainedStudent = studentsRetained > 0 
       ? Math.round(annualPlatformCostCOP / studentsRetained) 
-      : 0;
+      : null; // null = no calculable
 
     return {
       totalStudents,

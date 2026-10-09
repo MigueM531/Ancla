@@ -53,11 +53,19 @@
         </a>
         <a href="#financiero" class="nav-link" data-view="view-financial">
           <span class="nav-icon">💰</span>
-          <span>Simulador ROI</span>
+          <span>Gestión Financiera & ROI</span>
         </a>
         <a href="#estudiantes" class="nav-link" data-view="view-students-table">
           <span class="nav-icon">👥</span>
-          <span>Estudiantes en Monitoreo</span>
+          <span>Padrón Académico & DB</span>
+        </a>
+        <a href="#privacidad" class="nav-link" data-view="view-privacy">
+          <span class="nav-icon">🔐</span>
+          <span>Privacidad & Roles</span>
+        </a>
+        <a href="#arquitectura" class="nav-link" data-view="view-architecture">
+          <span class="nav-icon">🏛️</span>
+          <span>Arquitectura & BPMN</span>
         </a>
 
         <div class="nav-section-title" style="margin-top: 18px;">Garantías & Ética</div>
@@ -106,223 +114,654 @@
              SUB-VISTA 1: DASHBOARD GENERAL EJECUTIVO
              ============================================================= -->
         <section id="view-executive" class="view-section active">
-          
-          <!-- KPIs Clave -->
-          <div class="kpi-grid">
-            <div class="kpi-card">
-              <div class="kpi-title">Estudiantes Monitoreados</div>
-              <div class="kpi-value" id="kpiTotalMonitored">6</div>
-              <div class="kpi-detail">Padrón activo en seguimiento</div>
-            </div>
 
-            <div class="kpi-card" style="border-left-color: var(--red-primary);">
-              <div class="kpi-title">En Riesgo de Deserción</div>
-              <div class="kpi-value" style="color: var(--red-hover);" id="kpiAtRisk">3</div>
-              <div class="kpi-detail"><span class="kpi-badge-trend danger">▲ Crítico / Alto</span> Señales de alerta temprana</div>
-            </div>
 
-            <div class="kpi-card">
-              <div class="kpi-title">Pre-Alertas Pendientes</div>
-              <div class="kpi-value" id="kpiPendingAlerts">2</div>
-              <div class="kpi-detail">Requieren validación humana del tutor</div>
-            </div>
+        <!-- BLOQUE DE BIENVENIDA EJECUTIVA -->
+        <div class="banner-consent mb-6">
+          <div class="consent-text">
+            <h4>📈 Monitoreo Preventivo y Detección Temprana Institucional</h4>
+            <p>
+              Consolidación cuantitativa (notas y asistencias) y cualitativa (estrés y sobrecarga percibida) para la retención estudiantil en primeros semestres.
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <a href="#financiero" data-view="view-financial" class="btn btn-primary btn-sm">Ver Simulador ROI</a>
+            <a href="#estudiantes" data-view="view-students-table" class="btn btn-secondary btn-sm">Ver Padrón Completo</a>
+          </div>
+        </div>
 
-            <div class="kpi-card">
-              <div class="kpi-title">Asistencia Promedio</div>
-              <div class="kpi-value" id="kpiAvgAttendance">83%</div>
-              <div class="kpi-detail">Umbral institucional mínimo: 80%</div>
-            </div>
+        <!-- KPIS CLAVE DE PERMANENCIA (HU07) -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-title">Estudiantes Monitoreados</div>
+            <div class="kpi-value" id="kpiTotalMonitored">6</div>
+            <div class="kpi-detail">Padrón activo en seguimiento</div>
+          </div>
 
-            <div class="kpi-card">
-              <div class="kpi-title">Promedio Ponderado General</div>
-              <div class="kpi-value" id="kpiAvgGPA">3.4</div>
-              <div class="kpi-detail">Escala de 0.0 a 5.0</div>
+          <div class="kpi-card border-l-4 border-l-[#e63946]">
+            <div class="kpi-title">En Riesgo de Deserción</div>
+            <div class="kpi-value text-[#ff4d5b]" id="kpiAtRisk">3</div>
+            <div class="kpi-detail"><span class="kpi-badge-trend danger">▲ Crítico / Alto</span> Señales de alerta temprana</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-title">Pre-Alertas Pendientes</div>
+            <div class="kpi-value text-[#ff9f43]" id="kpiPendingAlerts">2</div>
+            <div class="kpi-detail">Requieren supervisión humana del tutor</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-title">Asistencia Promedio</div>
+            <div class="kpi-value" id="kpiAvgAttendance">83%</div>
+            <div class="kpi-detail">Umbral institucional mínimo: 80%</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-title">Promedio Ponderado General</div>
+            <div class="kpi-value" id="kpiAvgGPA">3.4</div>
+            <div class="kpi-detail">Escala de 0.0 a 5.0</div>
+          </div>
+        </div>
+
+        <!-- CUADRÍCULA DE ANÁLISIS: DISTRIBUCIÓN DE RIESGO Y DESGLOSE POR PROGRAMAS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+          <!-- Tarjeta 1: Distribución por Nivel de Riesgo (HU05) -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title"><span class="card-title-icon">📊</span> Distribución por Nivel de Riesgo</h3>
+                <div class="card-subtitle">Clasificación determinista por umbrales cuantitativos y cualitativos</div>
+              </div>
+            </div>
+            <div class="finance-breakdown-list">
+              <div class="finance-item">
+                <span class="text-[#ff4d5b] font-semibold">🚨 Riesgo Crítico (&lt; 75% asist. + sobrecarga)</span>
+                <span class="badge-risk critico" id="distCritico">1 casos</span>
+              </div>
+              <div class="finance-item">
+                <span class="text-[#ff7675] font-semibold">⚠️ Riesgo Alto (Promedio &lt; 3.0 + estrés)</span>
+                <span class="badge-risk alto" id="distAlto">2 casos</span>
+              </div>
+              <div class="finance-item">
+                <span class="text-[#ffa502] font-semibold">🟡 Riesgo Medio (Observación preventiva)</span>
+                <span class="badge-risk medio" id="distMedio">1 casos</span>
+              </div>
+              <div class="finance-item">
+                <span class="text-[#55efc4] font-semibold">🟢 Riesgo Bajo (Evolución favorable)</span>
+                <span class="badge-risk bajo" id="distBajo">2 casos</span>
+              </div>
             </div>
           </div>
 
-          <!-- Distribución de Riesgo & Pilares -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
-            <div class="card">
-              <div class="card-header">
-                <div>
-                  <h3 class="card-title"><span class="card-title-icon">📊</span> Distribución por Nivel de Riesgo</h3>
-                  <div class="card-subtitle">Clasificación mediante motor determinista de umbrales</div>
-                </div>
-              </div>
-              <div class="finance-breakdown-list">
-                <div class="finance-item">
-                  <span style="color: var(--red-hover); font-weight: 600;">🚨 Riesgo Crítico (&lt; 75% asist. + sobrecarga)</span>
-                  <span class="badge-risk critico" id="distCritico">1 casos</span>
-                </div>
-                <div class="finance-item">
-                  <span style="color: #ff7675; font-weight: 600;">⚠️ Riesgo Alto (Promedio &lt; 3.0 + estrés)</span>
-                  <span class="badge-risk alto" id="distAlto">2 casos</span>
-                </div>
-                <div class="finance-item">
-                  <span style="color: #ffa502; font-weight: 600;">🟡 Riesgo Medio (Observación preventiva)</span>
-                  <span class="badge-risk medio" id="distMedio">1 casos</span>
-                </div>
-                <div class="finance-item">
-                  <span style="color: #55efc4; font-weight: 600;">🟢 Riesgo Bajo (Evolución favorable)</span>
-                  <span class="badge-risk bajo" id="distBajo">2 casos</span>
-                </div>
+          <!-- Tarjeta 2: Permanencia por Programas de Ingeniería -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title"><span class="card-title-icon">🏛️</span> Permanencia por Programa</h3>
+                <div class="card-subtitle">Rendimiento y riesgo en programas de la Facultad</div>
               </div>
             </div>
+            <div class="finance-breakdown-list" id="programBreakdownContainer">
+              <!-- Se puebla dinámicamente -->
+            </div>
+          </div>
 
-            <div class="card">
-              <div class="card-header">
-                <div>
-                  <h3 class="card-title"><span class="card-title-icon">🛡️</span> Pilares de Prevención Ancla</h3>
-                  <div class="card-subtitle">Enfoque formativo, ético y no sancionador</div>
-                </div>
+        </div>
+
+        <!-- CUADRÍCULA INFERIOR: CASOS CRÍTICOS Y ENLACES DIRECTOS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- Casos Críticos que Requieren Intervención -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title"><span class="card-title-icon">🚨</span> Alertas Tempranas en Observación</h3>
+                <div class="card-subtitle">Estudiantes con pre-alertas pendientes de validación</div>
               </div>
-              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 14px;">
-                Ancla integra los datos cuantitativos institucionales (notas y asistencias) con el pulso emocional del estudiante, erradicando modelos punitivos y cajas negras.
-              </p>
-              <div class="finance-breakdown-list">
-                <div class="finance-item">
-                  <span>Validación Humana Obligatoria</span>
-                  <span style="color: var(--status-low);">✓ Cero Falsos Positivos</span>
-                </div>
-                <div class="finance-item">
-                  <span>Modelo de Encuesta Typeform</span>
-                  <span style="color: var(--text-white);">1 Pregunta / Micro-pulsos</span>
-                </div>
-                <div class="finance-item">
-                  <span>Gestión Financiera & Sostenibilidad</span>
-                  <span style="color: var(--red-hover);">SaaS & Retorno de Inversión</span>
-                </div>
+              <a href="tutor.html" onclick="localStorage.setItem('ancla_current_role','tutor')" class="btn btn-secondary btn-sm text-xs">Ir a Bandeja →</a>
+            </div>
+            <div class="finance-breakdown-list" id="criticalSummaryContainer">
+              <!-- Se puebla dinámicamente -->
+            </div>
+          </div>
+
+          <!-- Pilares de Gestión y Sostenibilidad Ancla -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title"><span class="card-title-icon">🛡️</span> Modelo Formativo y Ético</h3>
+                <div class="card-subtitle">Garantías técnicas de la solución Ancla</div>
+              </div>
+            </div>
+            <div class="finance-breakdown-list">
+              <div class="finance-item">
+                <span>Supervisión Humana Obligatoria</span>
+                <span class="text-[#00b894] font-semibold">✓ Cero Falsos Positivos</span>
+              </div>
+              <div class="finance-item">
+                <span>Micro-Encuestas Typeform</span>
+                <span class="text-[#f0f2f8]">1 Pregunta / Micro-pulsos</span>
+              </div>
+              <div class="finance-item">
+                <span>Retorno de Inversión (ROI)</span>
+                <a href="#financiero" data-view="view-financial" class="text-[#ff4d5b] hover:underline font-semibold">Simulador SaaS Disponible →</a>
+              </div>
+              <div class="finance-item">
+                <span>Base de Datos Unificada</span>
+                <a href="#estudiantes" data-view="view-students-table" class="text-[#55efc4] hover:underline font-semibold">Sincronización Académica →</a>
               </div>
             </div>
           </div>
+
+        </div>
+
+      
         </section>
 
         <!-- =============================================================
              SUB-VISTA 2: SIMULADOR FINANCIERO Y ROI
              ============================================================= -->
         <section id="view-financial" class="view-section">
-          <div class="card">
-            <div class="card-header">
-              <div>
-                <h2 class="card-title"><span class="card-title-icon">💰</span> Simulador de Impacto Económico y Retención</h2>
-                <div class="card-subtitle">
-                  Visualiza el retorno de la inversión (ROI) y los beneficios financieros para la Facultad de Ingenierías derivados de la retención estudiantil.
+
+
+        <!-- BANNER DE PROPUESTA DE VALOR FINANCIERA (MODELO CANVAS) -->
+        <div class="banner-consent mb-6">
+          <div class="consent-text">
+            <h4>💰 Sostenibilidad y Modelo Financiero SaaS de ANCLA</h4>
+            <p>
+              La retención de un estudiante en los primeros semestres preserva los ingresos de matrícula de toda su carrera. Este módulo permite a las directivas evaluar la relación costo-beneficio y el retorno económico de la inversión preventiva.
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <a href="#dashboard" data-view="view-executive" class="btn btn-secondary btn-sm">← Volver al Dashboard</a>
+          </div>
+        </div>
+
+        <!-- MÓDULO 1: ANÁLISIS DE COSTOS Y VIABILIDAD (HU09) -->
+        <section class="card mb-6">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><span class="card-title-icon">🏷️</span> Estructura de Costos de la Plataforma (HU09)</h2>
+              <div class="card-subtitle">
+                Estimación de diseño, implementación en la nube y operación anual basada en arquitectura monolítica modular.
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-[#8b96aa]">Inversión Inicial: </span>
+              <span class="text-white font-bold text-sm" id="valInitialCost">$ 35.000.000 COP</span>
+            </div>
+          </div>
+
+          <div class="cost-breakdown-grid" id="costItemsContainer">
+            <!-- Se llena dinámicamente con las categorías de costos -->
+          </div>
+        </section>
+
+        <!-- MÓDULO 2: SIMULADOR INTERACTIVO DE IMPACTO Y ROI (HU10) -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><span class="card-title-icon">📈</span> Simulador de Impacto Económico y Retención (HU10)</h2>
+              <div class="card-subtitle">
+                Modifica los parámetros para simular escenarios de reducción de deserción y calcular el ROI en tiempo real.
+              </div>
+            </div>
+          </div>
+
+          <!-- Selector de Escenarios Rápidos -->
+          <div class="scenario-buttons-row">
+            <span class="text-xs text-[#8b96aa] self-center mr-2">Escenarios Predefinidos:</span>
+            <button class="scenario-btn" data-scenario="conservador">🌱 Conservador (20% retención)</button>
+            <button class="scenario-btn active" data-scenario="moderado">⚖️ Moderado (35% retención)</button>
+            <button class="scenario-btn" data-scenario="optimo">🚀 Óptimo (50% retención)</button>
+          </div>
+
+          <div class="simulator-grid">
+            <!-- Sliders de Parámetros -->
+            <div class="bg-[#0f1117] p-6 rounded-md border border-[#252a38]">
+              <h4 class="text-xs font-bold text-white mb-4 uppercase tracking-wider">
+                Parámetros Institucionales
+              </h4>
+
+              <div class="control-group">
+                <div class="control-label">
+                  <span>Estudiantes en Primeros Semestres:</span>
+                  <span class="control-value-badge" id="valSimStudents">1,250</span>
                 </div>
+                <input type="range" id="simStudents" class="range-slider" min="500" max="3000" step="50" value="1250">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label">
+                  <span>Tasa de Deserción Histórica (%):</span>
+                  <span class="control-value-badge" id="valSimDropoutRate">16.5%</span>
+                </div>
+                <input type="range" id="simDropoutRate" class="range-slider" min="5" max="30" step="0.5" value="16.5">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label">
+                  <span>Valor Matrícula Semestral (COP):</span>
+                  <span class="control-value-badge" id="valSimTuition">$ 6.800.000</span>
+                </div>
+                <input type="range" id="simTuition" class="range-slider" min="3000000" max="12000000" step="200000" value="6800000">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label">
+                  <span>Retención Efectiva con Ancla (% éxito):</span>
+                  <span class="control-value-badge" id="valSimRetentionRate">35%</span>
+                </div>
+                <input type="range" id="simRetentionRate" class="range-slider" min="10" max="70" step="5" value="35">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label">
+                  <span>Costo Operativo Anual Ancla (SaaS / Servidores):</span>
+                  <span class="control-value-badge" id="valSimPlatformCost">$ 42.000.000</span>
+                </div>
+                <input type="range" id="simPlatformCost" class="range-slider" min="20000000" max="80000000" step="2000000" value="42000000">
               </div>
             </div>
 
-            <div class="simulator-grid">
-              <!-- Sliders de Parámetros -->
-              <div style="background: var(--bg-deep); padding: 22px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-                <h4 style="font-size: 0.88rem; color: var(--text-white); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.8px;">
-                  Parámetros del Reto Institucional
-                </h4>
-
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Estudiantes en Primeros Semestres:</span>
-                    <span class="control-value-badge" id="valSimStudents">1,250</span>
-                  </div>
-                  <input type="range" id="simStudents" class="range-slider" min="500" max="3000" step="50" value="1250">
-                </div>
-
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Tasa de Deserción Histórica (%):</span>
-                    <span class="control-value-badge" id="valSimDropoutRate">16.5%</span>
-                  </div>
-                  <input type="range" id="simDropoutRate" class="range-slider" min="5" max="30" step="0.5" value="16.5">
-                </div>
-
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Valor Matrícula Semestral (COP):</span>
-                    <span class="control-value-badge" id="valSimTuition">$ 6.800.000</span>
-                  </div>
-                  <input type="range" id="simTuition" class="range-slider" min="3000000" max="12000000" step="200000" value="6800000">
-                </div>
-
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Retención Efectiva con Ancla (% éxito):</span>
-                    <span class="control-value-badge" id="valSimRetentionRate">30%</span>
-                  </div>
-                  <input type="range" id="simRetentionRate" class="range-slider" min="10" max="70" step="5" value="30">
-                </div>
-
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Costo Operativo Anual Ancla (SaaS / Servidores):</span>
-                    <span class="control-value-badge" id="valSimPlatformCost">$ 42.000.000</span>
-                  </div>
-                  <input type="range" id="simPlatformCost" class="range-slider" min="20000000" max="80000000" step="2000000" value="42000000">
-                </div>
+            <!-- Resultados Calculados -->
+            <div>
+              <div class="roi-card-highlight">
+                <h3 class="text-sm font-semibold text-[#8b96aa]">Retorno Estimado sobre la Inversión (ROI)</h3>
+                <div class="roi-big-number" id="resRoiPercentage">2,228%</div>
+                <span class="text-xs text-[#8b96aa]">Beneficio institucional altamente viable para la Universidad de Medellín</span>
               </div>
 
-              <!-- Resultados Calculados -->
-              <div>
-                <div class="roi-card-highlight">
-                  <h3>Retorno Estimado sobre la Inversión (ROI)</h3>
-                  <div class="roi-big-number" id="resRoiPercentage">1,907%</div>
-                  <span style="font-size: 0.8rem; color: var(--text-secondary);">Beneficio económico altamente viable para la institución</span>
+              <div class="finance-breakdown-list">
+                <div class="finance-item">
+                  <span>Estudiantes Rescatados / Retenidos al Año:</span>
+                  <span id="resRetainedStudents" class="text-[#00b894] font-bold text-base">72 estudiantes</span>
                 </div>
-
-                <div class="finance-breakdown-list">
-                  <div class="finance-item">
-                    <span>Estudiantes Retenidos / Rescatados al Año:</span>
-                    <span id="resRetainedStudents" style="color: var(--status-low); font-size: 1rem;">62 estudiantes</span>
-                  </div>
-                  <div class="finance-item">
-                    <span>Ingresos por Matrículas Preservadas (Año):</span>
-                    <span id="resRevenuePreserved" style="color: var(--text-white);">$ 843.200.000</span>
-                  </div>
-                  <div class="finance-item">
-                    <span>Pérdida Anual Evitada sin Intervención:</span>
-                    <span id="resAnnualLoss" style="color: var(--red-hover);">$ 2.801.600.000</span>
-                  </div>
-                  <div class="finance-item">
-                    <span>Beneficio Neto para la Universidad:</span>
-                    <span id="resNetBenefit" style="color: var(--status-low);">$ 801.200.000</span>
-                  </div>
-                  <div class="finance-item">
-                    <span>Costo por Estudiante Rescatado:</span>
-                    <span id="resCostPerRetained">$ 677.419</span>
-                  </div>
+                <div class="finance-item">
+                  <span>Ingresos por Matrículas Preservadas (Año):</span>
+                  <span id="resRevenuePreserved" class="text-white font-semibold">$ 979.200.000</span>
+                </div>
+                <div class="finance-item">
+                  <span>Pérdida Anual Evitada sin Intervención:</span>
+                  <span id="resAnnualLoss" class="text-[#ff4d5b] font-semibold">$ 2.797.600.000</span>
+                </div>
+                <div class="finance-item">
+                  <span>Beneficio Económico Neto para la Facultad:</span>
+                  <span id="resNetBenefit" class="text-[#00b894] font-bold">$ 937.200.000</span>
+                </div>
+                <div class="finance-item">
+                  <span>Costo por Estudiante Rescatado:</span>
+                  <span id="resCostPerRetained" class="text-[#d8dde8] font-medium">$ 583.333</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
+      
+        </section>
+
         <!-- =============================================================
              SUB-VISTA 3: MONITOREO GENERAL DE ESTUDIANTES
              ============================================================= -->
         <section id="view-students-table" class="view-section">
+
+
+        <!-- BANNER DE SINCRONIZACIÓN INSTITUCIONAL (HU03) -->
+        <div class="banner-consent mb-6">
+          <div class="consent-text">
+            <h4>🔄 Sincronización Estructurada con el Sistema Académico UdeMedellín</h4>
+            <p>
+              Integra automáticamente notas, asistencias acumuladas y asignaturas matriculadas, alimentando de manera determinista el motor de reglas sin fragmentación.
+            </p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btnSyncAcademicData">
+            🔄 Sincronizar con Sistema Institucional
+          </button>
+        </div>
+
+        <!-- TARJETA DEL PADRÓN DE ESTUDIANTES -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><span class="card-title-icon">👥</span> Padrón Consolidado de Estudiantes</h2>
+              <div class="card-subtitle">
+                Seguimiento integral del rendimiento académico y variables cualitativas de bienestar.
+              </div>
+            </div>
+            <div>
+              <span class="launcher-card-tag tag-primary" id="filteredCountBadge">6 estudiantes</span>
+            </div>
+          </div>
+
+          <!-- BARRA DE BÚSQUEDA Y FILTROS -->
+          <div class="academic-search-bar">
+            <input type="text" id="searchStudentInput" class="search-input-field" placeholder="Buscar por nombre, código o programa...">
+            
+            <select id="filterProgramSelect" class="academic-filter-select">
+              <option value="all">Todos los Programas</option>
+              <option value="Sistemas">Ing. de Sistemas</option>
+              <option value="Industrial">Ing. Industrial</option>
+              <option value="Civil">Ing. Civil</option>
+              <option value="Ambiental">Ing. Ambiental</option>
+              <option value="Electrónica">Ing. Electrónica</option>
+            </select>
+
+            <select id="filterRiskSelect" class="academic-filter-select">
+              <option value="all">Todos los Riesgos</option>
+              <option value="Crítico">🚨 Riesgo Crítico</option>
+              <option value="Alto">⚠️ Riesgo Alto</option>
+              <option value="Medio">🟡 Riesgo Medio</option>
+              <option value="Bajo">🟢 Riesgo Bajo</option>
+            </select>
+          </div>
+
+          <!-- TABLA DE ESTUDIANTES -->
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Estudiante</th>
+                  <th>Promedio Ponderado</th>
+                  <th>% Asistencia</th>
+                  <th>Percepciones (Estrés / Bienestar)</th>
+                  <th>Nivel de Riesgo</th>
+                  <th class="text-right">Detalle</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTableBody">
+                <!-- Se llena dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      
+        </section>
+
+        <!-- PESTAÑA: PRIVACIDAD Y ROLES (HU01, HU02) -->
+        <section id="view-privacy" class="view-section">
+
+
+        <!-- PRINCIPIO ÉTICO INSTITUCIONAL (DOFA / HU01) -->
+        <div class="banner-consent mb-6">
+          <div class="consent-text">
+            <h4>🔒 Principio Ético de Uso Formativo y No Punitivo</h4>
+            <p>
+              Para neutralizar la desconfianza del estudiante y proteger el Habeas Data (Ley 1581 de Colombia), ANCLA establece que los datos perceptuales de bienestar se usan <strong>exclusivamente</strong> para orientación voluntaria y nunca para sanciones académicas.
+            </p>
+          </div>
+        </div>
+
+        <!-- CUADRÍCULA: GESTIÓN DE CONSENTIMIENTO Y POLÍTICAS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+          <!-- Tarjeta 1: Estado del consentimiento (solo lectura; lo gestiona cada estudiante) -->
           <div class="card">
             <div class="card-header">
               <div>
-                <h2 class="card-title"><span class="card-title-icon">👥</span> Padrón de Estudiantes Monitoreados</h2>
-                <div class="card-subtitle">Seguimiento consolidado de notas, asistencias y estado perceptual</div>
+                <h3 class="card-title"><span class="card-title-icon">✍️</span> Consentimiento Informado (HU01)</h3>
+                <div class="card-subtitle">Solo la persona titular puede autorizarlo o revocarlo, desde su portal.</div>
               </div>
             </div>
+            <span id="consentStateBadge" class="badge-risk bajo">Estado</span>
+            <p class="text-xs text-[#8b96aa]" id="consentDateText" style="margin-top:10px;"></p>
+          </div>
 
-            <div class="data-table-container">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Estudiante</th>
-                    <th>Promedio Ponderado</th>
-                    <th>% Asistencia</th>
-                    <th>Percepciones (Estrés / Carga)</th>
-                    <th>Estado Global</th>
-                  </tr>
-                </thead>
-                <tbody id="allStudentsTableBody">
-                  <!-- Se genera dinámicamente -->
-                </tbody>
-              </table>
+          <!-- Tarjeta 2: Garantías Institucionales UdeMedellín -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title"><span class="card-title-icon">🛡️</span> Garantías Institucionales</h3>
+                <div class="card-subtitle">Compromiso ético de la Facultad de Ingenierías</div>
+              </div>
+            </div>
+            <div class="finance-breakdown-list">
+              <div class="finance-item">
+                <span>Independencia Curricular</span>
+                <span class="text-[#00b894] font-semibold">Tus respuestas no bajan notas</span>
+              </div>
+              <div class="finance-item">
+                <span>Supervisión Humana</span>
+                <span class="text-[#f0f2f8]">El sistema no toma decisiones solo</span>
+              </div>
+              <div class="finance-item">
+                <span>Confidencialidad Médica/Psicológica</span>
+                <span class="text-[#55efc4] font-semibold">Restringido a Bienestar</span>
+              </div>
             </div>
           </div>
+
+        </div>
+
+        <!-- MÓDULO 2: CONTROL DE ACCESO POR ROLES (HU02) -->
+        <div class="card mb-6">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><span class="card-title-icon">👥</span> Matriz de Control de Acceso por Roles y Privilegios (HU02)</h2>
+              <div class="card-subtitle">
+                Garantiza acceso segregado por roles para prevenir el uso indebido o punitivo de la información.
+              </div>
+            </div>
+          </div>
+
+          <div class="data-table-container">
+            <table class="role-matrix-table">
+              <thead>
+                <tr>
+                  <th>Privilegio / Acción en el Sistema</th>
+                  <th style="text-align: center;">🎓 Estudiante</th>
+                  <th style="text-align: center;">🛡️ Tutor / Bienestar</th>
+                  <th style="text-align: center;">📊 Directivo</th>
+                  <th style="text-align: center;">⚙️ Administrador</th>
+                </tr>
+              </thead>
+              <tbody id="roleMatrixTableBody">
+                <!-- Se puebla dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- MÓDULO 3: REGISTROS DE AUDITORÍA DE SEGURIDAD -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><span class="card-title-icon">📜</span> Trazabilidad y Auditoría de Seguridad</h2>
+              <div class="card-subtitle">
+                Registro inmutable de consentimientos, validaciones humanas e inicios de sesión.
+              </div>
+            </div>
+          </div>
+          <div class="audit-log-box" id="auditLogsContainer">
+            <!-- Se puebla dinámicamente -->
+          </div>
+        </div>
+
+      
+        </section>
+
+        <!-- PESTAÑA: ARQUITECTURA Y BPMN -->
+        <section id="view-architecture" class="view-section">
+
+
+        <!-- BANNER DE JUSTIFICACIÓN ARQUITECTÓNICA -->
+        <div class="banner-consent mb-6">
+          <div class="consent-text">
+            <h4>🏛️ Enfoque Arquitectónico Monolítico Modular de Tres Capas</h4>
+            <p>
+              Diseñado para responder a la necesidad de equilibrar el rigor académico del reto con la agilidad necesaria en un entorno universitario. Evita la sobrecarga de datos y complejidad innecesaria de microservicios, optimiza el manejo de datos relacionales y simplifica el despliegue en plataformas cloud.
+            </p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btnTestBpmnFlow">
+            🧪 Probar Motor de Reglas
+          </button>
+        </div>
+
+        <!-- TARJETA CON RESULTADO DE PRUEBA EN VIVO -->
+        <div id="bpmnSimResult" class="card mb-6" style="display: none; border-left: 4px solid var(--red-primary);">
+          <!-- Se llena al presionar el botón -->
+        </div>
+
+        <!-- LAS TRES CAPAS DEL SISTEMA -->
+        <div class="layer-arch-grid mb-6">
+
+          <!-- Capa 1: Presentación -->
+          <div class="layer-arch-card">
+            <div class="layer-arch-title">
+              <span>🖥️</span> Capa de Presentación
+            </div>
+            <div class="layer-arch-desc">
+              Separa la interfaz gráfica y los tableros interactivos según el rol del usuario, evitando saturación visual mediante vistas modulares independientes.
+            </div>
+            <ul class="layer-arch-list">
+              <li>Dashboard Ejecutivo Directivo (HU07)</li>
+              <li>Bandeja de Acompañamiento del Tutor (HU06)</li>
+              <li>Portal del Estudiante con Micro-encuestas Typeform (HU04)</li>
+              <li>Simulador Financiero de Retorno ROI (HU10)</li>
+              <li>Padrón y Consulta Académica (HU03)</li>
+            </ul>
+          </div>
+
+          <!-- Capa 2: Lógica del Sistema -->
+          <div class="layer-arch-card">
+            <div class="layer-arch-title">
+              <span>⚙️</span> Capa de Lógica & Reglas
+            </div>
+            <div class="layer-arch-desc">
+              Aloja un motor de reglas determinista y transparente para las alertas de deserción, fundamentado en umbrales cuantitativos y cualitativos.
+            </div>
+            <ul class="layer-arch-list">
+              <li>Motor Determinista de Umbrales (HU05)</li>
+              <li>Protocolo de Pre-Alertas Tempranas (HU08)</li>
+              <li>Flujo de Validación Humana Obligatoria (HU06)</li>
+              <li>Simulador de Retención Estudiantil (HU09, HU10)</li>
+              <li>Control de Roles y Privilegios (HU02)</li>
+            </ul>
+          </div>
+
+          <!-- Capa 3: Capa de Datos -->
+          <div class="layer-arch-card">
+            <div class="layer-arch-title">
+              <span>💾</span> Capa de Datos
+            </div>
+            <div class="layer-arch-desc">
+              Centraliza el almacenamiento seguro garantizando la integridad de la información sensible y el control de accesos.
+            </div>
+            <ul class="layer-arch-list">
+              <li>Base de Datos Estructurada de Notas y Asistencias (HU03)</li>
+              <li>Sincronización masiva con sistema institucional</li>
+              <li>Ingesta de percepciones emocionales (HU04)</li>
+              <li>Consentimiento informado y auditoría (HU01)</li>
+              <li>Almacén persistente local para prototipo ágil</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- DIAGRAMA DE PROCESOS BPMN (FLUJO COMPLETO) -->
+        <div class="card mb-6">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><span class="card-title-icon">🔄</span> Modelado de Procesos (Diagrama BPMN)</h2>
+              <div class="card-subtitle">
+                Ciclo completo de seguimiento: desde la captura de percepción hasta la evaluación financiera de la retención.
+              </div>
+            </div>
+          </div>
+
+          <div class="bpmn-timeline">
+
+            <!-- Fase 1: Captura e Ingesta -->
+            <div class="bpmn-step-card">
+              <div class="bpmn-step-header">
+                <div class="bpmn-step-badge">1</div>
+                <div class="bpmn-step-title">Captura e Ingesta</div>
+              </div>
+              <div class="bpmn-step-desc">
+                El estudiante registra su bienestar emocional en encuestas Typeform de 1 sola pregunta, y el sistema sincroniza notas y asistencias institucionales.
+              </div>
+              <span class="bpmn-criteria-tag">Criterio 1: Cumplido ✓</span>
+            </div>
+
+            <!-- Fase 2: Motor Determinista -->
+            <div class="bpmn-step-card">
+              <div class="bpmn-step-header">
+                <div class="bpmn-step-badge">2</div>
+                <div class="bpmn-step-title">Evaluación Lógica</div>
+              </div>
+              <div class="bpmn-step-desc">
+                El motor evalúa si se rebasan los umbrales (< 80% asistencia, promedio < 3.0, estrés >= 4) y genera automáticamente una pre-alerta temprana.
+              </div>
+              <span class="bpmn-criteria-tag">Criterio 1: Cumplido ✓</span>
+            </div>
+
+            <!-- Fase 3: Supervisión Humana -->
+            <div class="bpmn-step-card">
+              <div class="bpmn-step-header">
+                <div class="bpmn-step-badge">3</div>
+                <div class="bpmn-step-title">Supervisión Humana</div>
+              </div>
+              <div class="bpmn-step-desc">
+                Obligatoriamente el tutor o profesional de bienestar revisa la pre-alerta para validarla y activar acompañamiento, o descartarla como falso positivo.
+              </div>
+              <span class="bpmn-criteria-tag">Criterio 2: Cumplido ✓</span>
+            </div>
+
+            <!-- Fase 4: Visualización & Finanzas -->
+            <div class="bpmn-step-card">
+              <div class="bpmn-step-header">
+                <div class="bpmn-step-badge">4</div>
+                <div class="bpmn-step-title">Visualización & Finanzas</div>
+              </div>
+              <div class="bpmn-step-desc">
+                Los directivos analizan la evolución de permanencia en el dashboard y calculan los beneficios económicos y ROI derivados de la retención lograda.
+              </div>
+              <span class="bpmn-criteria-tag">Criterio 3: Cumplido ✓</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ESTRUCTURA WBS / ETP (5 MÓDULOS) -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><span class="card-title-icon">📊</span> Estructura de Trabajo (WBS / ETP)</h2>
+              <div class="card-subtitle">División jerárquica de los cinco módulos funcionales del proyecto</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div class="p-4 bg-[#0f1117] rounded-md border border-[#252a38]">
+              <span class="text-xs text-[#e63946] font-bold block mb-1">MÓDULO 1</span>
+              <strong class="text-white text-sm block mb-1">Frontend</strong>
+              <p class="text-xs text-[#8b96aa]">Interfaces responsivas, tableros interactivos y micro-encuestas Typeform.</p>
+            </div>
+            <div class="p-4 bg-[#0f1117] rounded-md border border-[#252a38]">
+              <span class="text-xs text-[#e63946] font-bold block mb-1">MÓDULO 2</span>
+              <strong class="text-white text-sm block mb-1">Backend</strong>
+              <p class="text-xs text-[#8b96aa]">Lógica de servicio, API de ingesta perceptual y base de datos relacional.</p>
+            </div>
+            <div class="p-4 bg-[#0f1117] rounded-md border border-[#252a38]">
+              <span class="text-xs text-[#e63946] font-bold block mb-1">MÓDULO 3</span>
+              <strong class="text-white text-sm block mb-1">Arquitectura & Seguridad</strong>
+              <p class="text-xs text-[#8b96aa]">Consentimiento informado, privacidad ética, matriz de roles y trazabilidad.</p>
+            </div>
+            <div class="p-4 bg-[#0f1117] rounded-md border border-[#252a38]">
+              <span class="text-xs text-[#e63946] font-bold block mb-1">MÓDULO 4</span>
+              <strong class="text-white text-sm block mb-1">Análisis & Lógica</strong>
+              <p class="text-xs text-[#8b96aa]">Motor determinista por umbrales y supervisión humana obligatoria.</p>
+            </div>
+            <div class="p-4 bg-[#0f1117] rounded-md border border-[#252a38]">
+              <span class="text-xs text-[#e63946] font-bold block mb-1">MÓDULO 5</span>
+              <strong class="text-white text-sm block mb-1">Gestión Financiera</strong>
+              <p class="text-xs text-[#8b96aa]">Estructura de costos SaaS, viabilidad económica y simulador interactivo ROI.</p>
+            </div>
+          </div>
+        </div>
+
+      
         </section>
 
       </div>
@@ -363,6 +802,10 @@
   <script src="../js/core/financialSimulator.js"></script>
   <script src="../js/core/apiService.js"></script>
   <script src="../js/shared.js"></script>
-  <script src="../js/modules/directivo.js"></script>
+  <script src="../js/modules/financiero.js"></script>
+<script src="../js/modules/academico.js"></script>
+<script src="../js/modules/privacidad.js"></script>
+<script src="../js/modules/arquitectura.js"></script>
+<script src="../js/modules/directivo.js"></script>
 </body>
 </html>

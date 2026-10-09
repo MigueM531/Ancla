@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "test": "node tests/run.js"
   },
   "keywords": [
     "ancla",
@@ -14,5 +15,8 @@
     "udemellin"
   ],
   "author": "Facultad de Ingenierías - Universidad de Medellín",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": {
+    "node": ">=16"
+  }
 }
