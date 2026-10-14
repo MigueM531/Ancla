@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 36" width="170" height="36" fill="none">
+  <!-- Insignia UdeM Simplificada -->
+  <rect x="2" y="2" width="32" height="32" rx="6" fill="#1E2228" stroke="#DC2626" stroke-width="1.5" />
+  <text x="7" y="23" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="900" fill="#DC2626">UdeM</text>
+  <!-- Texto institucional -->
+  <text x="42" y="16" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="700" fill="#FFFFFF">Facultad de Ingenierías</text>
+  <text x="42" y="27" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="500" fill="#9CA3AF">Universidad de Medellín</text>
+</svg>
+
