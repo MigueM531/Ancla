@@ -11,15 +11,13 @@ const RulesEngine = {
   thresholds: {
     minAcceptableAttendance: 80,   // % asistencia mínima institucional
     criticalAttendance: 75,        // % asistencia de alto riesgo
-    minPassingGrade: 3.0,          // Escala 0.0 - 5.0
-    warningGrade: 3.3,
     criticalStressLevel: 4,        // Escala 1 - 5 (Typeform)
     criticalAcademicLoad: 4,       // Escala 1 - 5 (Typeform)
     criticalWellbeingLow: 2        // Escala 1 - 5
   },
 
   /**
-   * Evalúa a un estudiante combinando variables cuantitativas y cualitativas.
+   * Evalúa a un estudiante combinando variables cuantitativas (asistencia) y cualitativas.
    * Retorna { riskLevel, triggerAlert, reason, trace, score }
    */
   evaluateStudent(student) {
@@ -39,18 +37,7 @@ const RulesEngine = {
       trace.push({ type: "ACADEMIC_ATTENDANCE", severity: "MEDIUM", detail: "Asistencia entre 75% y 80%" });
     }
 
-    // 2. Evaluación Cuantitativa de Notas / Promedio (HU03)
-    if (student.averageGrade < t.minPassingGrade) {
-      riskScore += 35;
-      reasons.push(`Promedio ponderado reprobatorio (${student.averageGrade} < 3.0)`);
-      trace.push({ type: "ACADEMIC_GRADE", severity: "HIGH", detail: "Promedio acumulado menor a 3.0" });
-    } else if (student.averageGrade < t.warningGrade) {
-      riskScore += 15;
-      reasons.push(`Promedio en margen de advertencia (${student.averageGrade})`);
-      trace.push({ type: "ACADEMIC_GRADE", severity: "MEDIUM", detail: "Promedio entre 3.0 y 3.3" });
-    }
-
-    // 3. Evaluación Cualitativa / Perceptual (HU04 - Typeform)
+    // 2. Evaluación Cualitativa / Perceptual (HU04 - Typeform)
     if (student.perceptions) {
       const { stressLevel, academicLoad, emotionalWellbeing, adaptationLevel } = student.perceptions;
 
@@ -77,7 +64,7 @@ const RulesEngine = {
       }
     }
 
-    // 4. Determinación de Nivel de Riesgo Determinista
+    // 3. Determinación de Nivel de Riesgo Determinista
     let riskLevel = "Bajo";
     let triggerAlert = false;
 

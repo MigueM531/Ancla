@@ -121,7 +121,7 @@
           <div class="consent-text">
             <h4>📈 Monitoreo Preventivo y Detección Temprana Institucional</h4>
             <p>
-              Consolidación cuantitativa (notas y asistencias) y cualitativa (estrés y sobrecarga percibida) para la retención estudiantil en primeros semestres.
+              Consolidación cuantitativa (asistencias) y cualitativa (estrés y sobrecarga percibida) para la retención estudiantil en primeros semestres.
             </p>
           </div>
           <div class="flex gap-2">
@@ -156,11 +156,6 @@
             <div class="kpi-detail">Umbral institucional mínimo: 80%</div>
           </div>
 
-          <div class="kpi-card">
-            <div class="kpi-title">Promedio Ponderado General</div>
-            <div class="kpi-value" id="kpiAvgGPA">3.4</div>
-            <div class="kpi-detail">Escala de 0.0 a 5.0</div>
-          </div>
         </div>
 
         <!-- CUADRÍCULA DE ANÁLISIS: DISTRIBUCIÓN DE RIESGO Y DESGLOSE POR PROGRAMAS -->
@@ -180,7 +175,7 @@
                 <span class="badge-risk critico" id="distCritico">1 casos</span>
               </div>
               <div class="finance-item">
-                <span class="text-[#ff7675] font-semibold">⚠️ Riesgo Alto (Promedio &lt; 3.0 + estrés)</span>
+                <span class="text-[#ff7675] font-semibold">⚠️ Riesgo Alto (Asistencia &lt; 80% + estrés)</span>
                 <span class="badge-risk alto" id="distAlto">2 casos</span>
               </div>
               <div class="finance-item">
@@ -413,7 +408,7 @@
           <div class="consent-text">
             <h4>🔄 Sincronización Estructurada con el Sistema Académico UdeMedellín</h4>
             <p>
-              Integra automáticamente notas, asistencias acumuladas y asignaturas matriculadas, alimentando de manera determinista el motor de reglas sin fragmentación.
+              Integra automáticamente asistencias acumuladas y asignaturas matriculadas, alimentando de manera determinista el motor de reglas sin fragmentación.
             </p>
           </div>
           <button class="btn btn-primary btn-sm" id="btnSyncAcademicData">
@@ -463,7 +458,6 @@
               <thead>
                 <tr>
                   <th>Estudiante</th>
-                  <th>Promedio Ponderado</th>
                   <th>% Asistencia</th>
                   <th>Percepciones (Estrés / Bienestar)</th>
                   <th>Nivel de Riesgo</th>
@@ -520,7 +514,7 @@
             <div class="finance-breakdown-list">
               <div class="finance-item">
                 <span>Independencia Curricular</span>
-                <span class="text-[#00b894] font-semibold">Tus respuestas no bajan notas</span>
+                <span class="text-[#00b894] font-semibold">Tus respuestas no afectan tu evaluación académica</span>
               </div>
               <div class="finance-item">
                 <span>Supervisión Humana</span>
@@ -650,7 +644,7 @@
               Centraliza el almacenamiento seguro garantizando la integridad de la información sensible y el control de accesos.
             </div>
             <ul class="layer-arch-list">
-              <li>Base de Datos Estructurada de Notas y Asistencias (HU03)</li>
+              <li>Base de Datos Estructurada de Asistencias y Asignaturas (HU03)</li>
               <li>Sincronización masiva con sistema institucional</li>
               <li>Ingesta de percepciones emocionales (HU04)</li>
               <li>Consentimiento informado y auditoría (HU01)</li>
@@ -680,7 +674,7 @@
                 <div class="bpmn-step-title">Captura e Ingesta</div>
               </div>
               <div class="bpmn-step-desc">
-                El estudiante registra su bienestar emocional en encuestas Typeform de 1 sola pregunta, y el sistema sincroniza notas y asistencias institucionales.
+                El estudiante registra su bienestar emocional en encuestas Typeform de 1 sola pregunta, y el sistema sincroniza asistencias institucionales.
               </div>
               <span class="bpmn-criteria-tag">Criterio 1: Cumplido ✓</span>
             </div>
@@ -692,7 +686,7 @@
                 <div class="bpmn-step-title">Evaluación Lógica</div>
               </div>
               <div class="bpmn-step-desc">
-                El motor evalúa si se rebasan los umbrales (< 80% asistencia, promedio < 3.0, estrés >= 4) y genera automáticamente una pre-alerta temprana.
+                El motor evalúa si se rebasan los umbrales (< 80% asistencia, estrés >= 4, carga >= 4) y genera automáticamente una pre-alerta temprana.
               </div>
               <span class="bpmn-criteria-tag">Criterio 1: Cumplido ✓</span>
             </div>
@@ -783,7 +777,7 @@
         </p>
         <h4 style="color: var(--text-white); margin-bottom: 8px;">Garantías Institucionales</h4>
         <ul style="padding-left: 20px; margin-bottom: 12px;">
-          <li>Las respuestas de bienestar no inciden en las notas curriculares.</li>
+          <li>Las respuestas de bienestar no inciden en la evaluación académica.</li>
           <li>Supervisión humana obligatoria en toda recomendación pedagógica.</li>
           <li>Ninguna decisión punitiva se toma de forma automatizada por el sistema.</li>
         </ul>

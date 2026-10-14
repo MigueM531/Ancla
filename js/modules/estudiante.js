@@ -6,7 +6,7 @@
  * - Indicadores personales de permanencia y rendimiento
  * - Gestión de consentimiento informado y ética de datos (HU01)
  * - Encuesta de bienestar y micro-pulsos estilo Typeform (HU04)
- * - Asignaturas matriculadas con notas y asistencias
+ * - Asignaturas matriculadas con asistencias
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -65,7 +65,6 @@ const EstudianteApp = {
     }
 
     // Indicadores académicos del estudiante
-    document.getElementById("studentAvgGrade").textContent = studentData.averageGrade.toFixed(1);
     document.getElementById("studentAttendance").textContent = `${studentData.attendanceRate}%`;
     document.getElementById("studentRiskBadge").textContent = `Riesgo: ${studentData.riskLevel}`;
     document.getElementById("studentRiskBadge").className = `badge-risk ${SharedApp.riskClass(studentData.riskLevel)}`;
@@ -80,9 +79,6 @@ const EstudianteApp = {
           <div>
             <span style="color:var(--text-white); font-weight:600;">${SharedApp.escapeHtml(c.name)}</span>
             <div style="font-size:0.75rem; color:var(--text-muted);">Asistencia: ${c.attendance}%</div>
-          </div>
-          <div>
-            <span class="badge-risk ${c.grade >= 3.0 ? 'bajo' : 'critico'}">Nota: ${c.grade.toFixed(1)}</span>
           </div>
         </div>
       `

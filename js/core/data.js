@@ -4,7 +4,7 @@
  * Universidad de Medellín - Facultad de Ingenierías
  */
 
-const STORAGE_KEY = "ancla_data_v3"; // v3: matriz de roles, auditoría, costos y escenarios
+const STORAGE_KEY = "ancla_data_v4"; // v4: sin promedio/notas en el modelo
 
 const ANCLA_DATA = {
   projectInfo: {
@@ -75,7 +75,6 @@ const ANCLA_DATA = {
       name: "Alejandra Escobar",
       program: "Ingeniería de Sistemas",
       semester: 2,
-      averageGrade: 3.8,
       attendanceRate: 91,
       // Variables perceptuales (HU04 - Encuesta Typeform)
       perceptions: {
@@ -86,9 +85,9 @@ const ANCLA_DATA = {
         lastSurveyDate: "2026-10-05"
       },
       courses: [
-        { name: "Cálculo Integral", grade: 3.5, attendance: 90 },
-        { name: "Programación II", grade: 4.2, attendance: 95 },
-        { name: "Física Mecánica", grade: 3.6, attendance: 88 }
+        { name: "Cálculo Integral", attendance: 90 },
+        { name: "Programación II", attendance: 95 },
+        { name: "Física Mecánica", attendance: 88 }
       ],
       riskLevel: "Bajo",
       preAlert: null
@@ -98,7 +97,6 @@ const ANCLA_DATA = {
       name: "Juan Pablo Montoya",
       program: "Ingeniería Industrial",
       semester: 1,
-      averageGrade: 2.8,
       attendanceRate: 74,
       perceptions: {
         emotionalWellbeing: 2,
@@ -108,9 +106,9 @@ const ANCLA_DATA = {
         lastSurveyDate: "2026-10-04"
       },
       courses: [
-        { name: "Cálculo Diferencial", grade: 2.6, attendance: 70 },
-        { name: "Álgebra Lineal", grade: 2.9, attendance: 75 },
-        { name: "Introducción a la Ingeniería", grade: 3.2, attendance: 78 }
+        { name: "Cálculo Diferencial", attendance: 70 },
+        { name: "Álgebra Lineal", attendance: 75 },
+        { name: "Introducción a la Ingeniería", attendance: 78 }
       ],
       riskLevel: "Crítico",
       preAlert: {
@@ -128,7 +126,6 @@ const ANCLA_DATA = {
       name: "Camila Andrea Henao",
       program: "Ingeniería Ambiental",
       semester: 2,
-      averageGrade: 2.9,
       attendanceRate: 84,
       perceptions: {
         emotionalWellbeing: 2,
@@ -138,14 +135,14 @@ const ANCLA_DATA = {
         lastSurveyDate: "2026-10-06"
       },
       courses: [
-        { name: "Química General", grade: 2.7, attendance: 82 },
-        { name: "Cálculo Integral", grade: 3.0, attendance: 85 }
+        { name: "Química General", attendance: 82 },
+        { name: "Cálculo Integral", attendance: 85 }
       ],
-      riskLevel: "Crítico",
+      riskLevel: "Alto",
       preAlert: {
         id: "PAL-002",
         date: "2026-10-06 09:15",
-        ruleTriggered: "Promedio < 3.0 + Estrés emocional alto (4/5)",
+        ruleTriggered: "Estrés emocional alto (4/5) + Carga percibida crítica (4/5)",
         status: "Pendiente",
         tutorNotes: "",
         validatedBy: null,
@@ -157,7 +154,6 @@ const ANCLA_DATA = {
       name: "Sebastián Gómez Ríos",
       program: "Ingeniería Civil",
       semester: 3,
-      averageGrade: 3.2,
       attendanceRate: 78,
       perceptions: {
         emotionalWellbeing: 3,
@@ -167,8 +163,8 @@ const ANCLA_DATA = {
         lastSurveyDate: "2026-10-03"
       },
       courses: [
-        { name: "Estática", grade: 2.9, attendance: 76 },
-        { name: "Topografía", grade: 3.4, attendance: 80 }
+        { name: "Estática", attendance: 76 },
+        { name: "Topografía", attendance: 80 }
       ],
       riskLevel: "Alto",
       preAlert: {
@@ -186,7 +182,6 @@ const ANCLA_DATA = {
       name: "Mariana Londoño Cruz",
       program: "Ingeniería de Sistemas",
       semester: 1,
-      averageGrade: 4.4,
       attendanceRate: 96,
       perceptions: {
         emotionalWellbeing: 5,
@@ -196,8 +191,8 @@ const ANCLA_DATA = {
         lastSurveyDate: "2026-10-07"
       },
       courses: [
-        { name: "Algoritmos", grade: 4.6, attendance: 98 },
-        { name: "Cálculo Diferencial", grade: 4.2, attendance: 95 }
+        { name: "Algoritmos", attendance: 98 },
+        { name: "Cálculo Diferencial", attendance: 95 }
       ],
       riskLevel: "Bajo",
       preAlert: null
@@ -207,7 +202,6 @@ const ANCLA_DATA = {
       name: "David Felipe Ortiz",
       program: "Ingeniería de Telecomunicaciones",
       semester: 2,
-      averageGrade: 3.4,
       attendanceRate: 72,
       perceptions: {
         emotionalWellbeing: 2,
@@ -217,8 +211,8 @@ const ANCLA_DATA = {
         lastSurveyDate: "2026-10-02"
       },
       courses: [
-        { name: "Circuitos I", grade: 3.1, attendance: 70 },
-        { name: "Física de Campos", grade: 3.6, attendance: 74 }
+        { name: "Circuitos I", attendance: 70 },
+        { name: "Física de Campos", attendance: 74 }
       ],
       riskLevel: "Crítico",
       preAlert: {
@@ -252,8 +246,8 @@ const ANCLA_DATA = {
       admin: false
     },
     {
-      key: "view_grades",
-      permission: "Visualizar notas y asistencias personales",
+      key: "view_academic",
+      permission: "Visualizar asistencias y asignaturas personales",
       estudiante: true,
       tutor: true,
       directivo: true,
@@ -427,7 +421,7 @@ const ANCLA_DATA = {
 };
 
 // Almacenamiento local (mock). Siempre devuelve una copia: la semilla nunca se muta.
-try { localStorage.removeItem("ancla_data_v1"); localStorage.removeItem("ancla_data_v2"); } catch (e) { /* ignorar */ }
+try { localStorage.removeItem("ancla_data_v1"); localStorage.removeItem("ancla_data_v2"); localStorage.removeItem("ancla_data_v3"); } catch (e) { /* ignorar */ }
 
 function getSavedData() {
   try {

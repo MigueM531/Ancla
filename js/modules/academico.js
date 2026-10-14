@@ -5,7 +5,7 @@
  * Funcionalidades:
  * - Padrón consolidado de estudiantes en monitoreo
  * - Filtros por texto, programa académico y nivel de riesgo
- * - Inspección detallada de notas y asistencias por materia
+ * - Inspección detallada de asistencias por materia
  * - Sincronización masiva con el sistema institucional de la Universidad
  */
 
@@ -42,7 +42,7 @@ const AcademicoApp = {
   },
 
   /**
-   * Botón de sincronización con el sistema institucional de notas (HU03)
+   * Botón de sincronización con el sistema institucional académico (HU03)
    */
   bindSyncButton() {
     const btnSync = document.getElementById("btnSyncAcademicData");
@@ -155,7 +155,6 @@ const AcademicoApp = {
                     <span style="font-weight:600; color:var(--text-white);">${SharedApp.escapeHtml(c.name)}</span>
                     <div style="font-size:0.72rem; color:var(--text-muted);">Asist: ${c.attendance}%</div>
                   </div>
-                  <span class="badge-risk ${c.grade >= 3.0 ? "bajo" : "critico"}">Nota: ${c.grade.toFixed(1)}</span>
                 </div>
               `
               )
@@ -167,12 +166,6 @@ const AcademicoApp = {
             <td>
               <div style="font-weight: 700; color: var(--text-white);">${SharedApp.escapeHtml(s.name)}</div>
               <div style="font-size: 0.75rem; color: var(--text-secondary);">${SharedApp.escapeHtml(s.id)} • ${SharedApp.escapeHtml(s.program)} (Sem. ${Number(s.semester)})</div>
-            </td>
-            <td>
-              <span style="font-weight: 700; font-size: 0.95rem; color: ${s.averageGrade >= 3.0 ? "var(--text-white)" : "var(--red-hover)"};">
-                ${s.averageGrade.toFixed(1)}
-              </span>
-              <div style="font-size: 0.72rem; color: var(--text-muted);">Escala 0.0 - 5.0</div>
             </td>
             <td>
               <span style="font-weight: 600; color: ${s.attendanceRate >= 80 ? "var(--status-low)" : "var(--red-hover)"};">

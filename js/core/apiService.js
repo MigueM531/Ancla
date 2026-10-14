@@ -150,7 +150,6 @@ const ApiService = {
     const pendingPreAlerts = students.filter(s => s.preAlert && s.preAlert.status === "Pendiente").length;
     const validatedAlerts = students.filter(s => s.preAlert && s.preAlert.status === "Validada").length;
     const avgAttendance = Math.round(students.reduce((acc, s) => acc + s.attendanceRate, 0) / (totalMonitored || 1));
-    const avgGPA = (students.reduce((acc, s) => acc + s.averageGrade, 0) / (totalMonitored || 1)).toFixed(2);
 
     return {
       totalMonitored,
@@ -158,7 +157,6 @@ const ApiService = {
       pendingPreAlerts,
       validatedAlerts,
       avgAttendance,
-      avgGPA,
       riskDistribution: {
         bajo: students.filter(s => s.riskLevel === "Bajo").length,
         medio: students.filter(s => s.riskLevel === "Medio").length,
@@ -204,7 +202,7 @@ const ApiService = {
     await this._simulateLatency();
     const state = getSavedData();
     state.students.forEach((s) => RulesEngine.processPreAlert(s));
-    this._audit(state, "Sincronización institucional simulada: notas y asistencias reevaluadas (HU03)");
+    this._audit(state, "Sincronización institucional simulada: asistencias reevaluadas (HU03)");
     persistData(state);
     return { success: true, studentsCount: state.students.length };
   }

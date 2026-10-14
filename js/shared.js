@@ -51,7 +51,6 @@ const SharedApp = {
               <div class="user-avatar" style="width:32px; height:32px; font-size:0.75rem;">${esc(s.name.slice(0, 2).toUpperCase())}</div>
               <div class="student-col-info"><h5>${esc(s.name)}</h5><span>${esc(s.id)} • ${esc(s.program)}</span></div>
             </div></td>
-            <td><strong>${s.averageGrade.toFixed(1)}</strong> / 5.0</td>
             <td><div style="display:flex; align-items:center; gap:8px;">
               <span>${s.attendanceRate}%</span>
               <div style="width:50px; height:4px; background:var(--bg-badge-gray); border-radius:2px; overflow:hidden;">

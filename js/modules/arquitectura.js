@@ -31,7 +31,6 @@ const ArquitecturaApp = {
         // Estudiante de prueba con sobrecarga
         const testStudent = {
           name: "Estudiante Simulado",
-          averageGrade: 2.8,
           attendanceRate: 74,
           perceptions: {
             stressLevel: 5,

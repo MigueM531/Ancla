@@ -38,7 +38,7 @@ const tests = {
   },
   "una alerta pendiente se cierra si el estudiante se recupera"() {
     const s = juan();
-    Object.assign(s, { attendanceRate: 95, averageGrade: 4 });
+    Object.assign(s, { attendanceRate: 95 });
     s.perceptions = { emotionalWellbeing: 5, stressLevel: 1, academicLoad: 1, adaptationLevel: 5 };
     RulesEngine.processPreAlert(s);
     assert.strictEqual(s.riskLevel, "Bajo");
@@ -62,7 +62,7 @@ const tests = {
   "la matriz de roles tiene claves únicas y el motor devuelve 'reason' (BPMN)"() {
     const keys = ANCLA_DATA.roleMatrix.map((r) => r.key);
     assert.ok(keys.every(Boolean) && new Set(keys).size === keys.length);
-    const ev = RulesEngine.evaluateStudent({ averageGrade: 2.8, attendanceRate: 74, perceptions: { stressLevel: 5, academicLoad: 5, emotionalWellbeing: 2, adaptationLevel: 2 } });
+    const ev = RulesEngine.evaluateStudent({ attendanceRate: 74, perceptions: { stressLevel: 5, academicLoad: 5, emotionalWellbeing: 2, adaptationLevel: 2 } });
     assert.ok(typeof ev.reason === "string" && ev.reason.split(" • ").length > 1);
   }
 };

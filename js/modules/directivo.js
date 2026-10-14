@@ -53,13 +53,11 @@ const DirectivoApp = {
       const kpiAtRisk = document.getElementById("kpiAtRisk");
       const kpiPending = document.getElementById("kpiPendingAlerts");
       const kpiAttendance = document.getElementById("kpiAvgAttendance");
-      const kpiGPA = document.getElementById("kpiAvgGPA");
 
       if (kpiTotal) kpiTotal.textContent = summary.totalMonitored.toLocaleString("es-CO");
       if (kpiAtRisk) kpiAtRisk.textContent = summary.studentsAtRisk;
       if (kpiPending) kpiPending.textContent = summary.pendingPreAlerts;
       if (kpiAttendance) kpiAttendance.textContent = `${summary.avgAttendance}%`;
-      if (kpiGPA) kpiGPA.textContent = summary.avgGPA;
 
       // Distribución por nivel de riesgo
       const distCritico = document.getElementById("distCritico");
@@ -90,19 +88,17 @@ const DirectivoApp = {
 
       students.forEach((s) => {
         if (!programs[s.program]) {
-          programs[s.program] = { total: 0, atRisk: 0, sumGPA: 0, sumAtt: 0 };
+          programs[s.program] = { total: 0, atRisk: 0, sumAtt: 0 };
         }
         programs[s.program].total++;
         if (s.riskLevel === "Crítico" || s.riskLevel === "Alto") {
           programs[s.program].atRisk++;
         }
-        programs[s.program].sumGPA += s.averageGrade;
         programs[s.program].sumAtt += s.attendanceRate;
       });
 
       container.innerHTML = Object.entries(programs)
         .map(([progName, data]) => {
-          const avgGpa = (data.sumGPA / data.total).toFixed(1);
           const avgAtt = Math.round(data.sumAtt / data.total);
           const riskRatio = Math.round((data.atRisk / data.total) * 100);
 
@@ -111,7 +107,7 @@ const DirectivoApp = {
             <div>
               <span style="color:var(--text-white); font-weight:600;">${SharedApp.escapeHtml(progName)}</span>
               <div style="font-size:0.75rem; color:var(--text-secondary);">
-                ${data.total} estudiantes • GPA Promedio: ${avgGpa} • Asistencia: ${avgAtt}%
+                ${data.total} estudiantes • Asistencia: ${avgAtt}%
               </div>
             </div>
             <div style="text-align:right;">
@@ -156,7 +152,7 @@ const DirectivoApp = {
           <div>
             <div style="font-weight:600; color:var(--text-white); font-size:0.88rem;">${SharedApp.escapeHtml(s.name)} (${SharedApp.escapeHtml(s.program)})</div>
             <div style="font-size:0.76rem; color:var(--red-hover);">
-              Promedio: ${s.averageGrade} • Asistencia: ${s.attendanceRate}% • ${s.preAlert ? SharedApp.escapeHtml(s.preAlert.ruleTriggered) : 'Alerta preventiva'}
+              Asistencia: ${s.attendanceRate}% • ${s.preAlert ? SharedApp.escapeHtml(s.preAlert.ruleTriggered) : 'Alerta preventiva'}
             </div>
           </div>
           <div>

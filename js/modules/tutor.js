@@ -169,7 +169,6 @@ const TutorApp = {
       document.getElementById("modalStudentName").textContent = `${student.name} (${student.program})`;
       document.getElementById("modalRuleDetails").textContent = student.preAlert.ruleTriggered;
       document.getElementById("modalAcademicStats").innerHTML = `
-        <strong>Promedio:</strong> ${student.averageGrade.toFixed(1)} | 
         <strong>Asistencia:</strong> ${student.attendanceRate}% | 
         <strong>Estrés reportado:</strong> ${student.perceptions ? student.perceptions.stressLevel + "/5" : "Sin datos (sin consentimiento)"}
       `;
