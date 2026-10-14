@@ -1,11 +1,11 @@
-# ANCLA ⚓
+# ANCLA
 ### Sistema de Monitoreo Temprano, Análisis y Alerta para la Permanencia Estudiantil
 **Proyecto de Ingeniería I (2026-2) — Proyecto # 5**  
 **Facultad de Ingenierías, Universidad de Medellín**
 
 ---
 
-## 👥 Integrantes y Docente
+## Integrantes y Docente
 * **Integrantes:**
   * Alejandra Escobar Chavarriaga
   * Miguel Ángel Martínez Tamayo
@@ -15,7 +15,7 @@
 
 ---
 
-## 🏛️ Arquitectura Modular del Proyecto
+## Arquitectura Modular del Proyecto
 
 El proyecto está organizado de manera modular y escalable, dividiendo las vistas, la lógica de negocio y los servicios centrales para facilitar el mantenimiento y la demostración ante clientes o directivas:
 
@@ -55,7 +55,7 @@ Ancla/
 
 ---
 
-## 🚀 ¿Cómo ejecutar el proyecto?
+## ¿Cómo ejecutar el proyecto?
 
 ### Opción 1: Servidor Local (Recomendado para la presentación)
 Puedes ejecutar el servidor localhost nativo de Node.js (no requiere instalar dependencias adicionales):
@@ -69,19 +69,19 @@ node server.js
 ```
 
 El servidor quedará disponible en:
-👉 **`http://localhost:3000`**
+**`http://localhost:3000`**
 
 Rutas directas amigables:
-* 📊 **Directivo:** `http://localhost:3000/directivo`
-* 🛡️ **Tutor / Bienestar:** `http://localhost:3000/tutor`
-* 🎓 **Estudiante:** `http://localhost:3000/estudiante`
+* **Directivo:** `http://localhost:3000/directivo`
+* **Tutor / Bienestar:** `http://localhost:3000/tutor`
+* **Estudiante:** `http://localhost:3000/estudiante`
 
 ### Opción 2: Sin servidor (Doble clic)
 El proyecto también funciona abriendo directamente cualquier archivo `.html` en tu navegador (`index.html` o los archivos dentro de `views/`), ya que utiliza rutas relativas universales y almacenamiento en `localStorage`.
 
 ---
 
-## 🔄 Conexión y Sincronización entre Dashboards
+## Conexión y Sincronización entre Dashboards
 
 Los dashboards comparten un almacén de datos (`localStorage`). Los cambios se ven al navegar entre vistas y, con varias pestañas abiertas, se actualizan solos (evento `storage`). En modo `file://` algunos navegadores (p. ej. Firefox) aíslan el almacenamiento por archivo: para la demo usa `npm start`.
 
