@@ -1,0 +1,438 @@
+/**
+ * ANCLA - Data Store y Estado Simulado
+ * Arquitectura Monolítica Modular de Tres Capas - Prototipo Frontend
+ * Universidad de Medellín - Facultad de Ingenierías
+ */
+
+const STORAGE_KEY = "ancla_data_v4"; // v4: sin promedio/notas en el modelo
+
+const ANCLA_DATA = {
+  projectInfo: {
+    name: "ANCLA",
+    tagline: "Sistema de Monitoreo Temprano, Análisis y Alerta para la Permanencia Estudiantil",
+    faculty: "Facultad de Ingenierías",
+    university: "Universidad de Medellín",
+    course: "Proyecto de Ingeniería I (2026-2)",
+    authors: [
+      "Alejandra Escobar Chavarriaga",
+      "Miguel Ángel Martínez Tamayo",
+      "Juan José Martínez Acosta",
+      "Cristian David Toro Arboleda"
+    ],
+    supervisor: "Duby Sulay Castellano Cárdenas",
+    version: "1.0.0-PROTOTIPO"
+  },
+
+  // Perfiles de usuario por rol (HU02)
+  users: {
+    student: {
+      id: "EST-2026-084",
+      name: "Alejandra Escobar",
+      email: "aescobar@udemellin.edu.co",
+      role: "estudiante",
+      roleLabel: "Estudiante",
+      program: "Ingeniería de Sistemas",
+      semester: 2,
+      avatar: "AE",
+      privacyConsentAccepted: true, // HU01
+      consentDate: "2026-02-10 08:30"
+    },
+    tutor: {
+      id: "TUT-104",
+      name: "Dr. Carlos Valderrama",
+      email: "cvalderrama@udemellin.edu.co",
+      role: "tutor",
+      roleLabel: "Tutor / Profesional de Bienestar",
+      department: "Bienestar Universitario & Consejería",
+      assignedStudentsCount: 6,
+      avatar: "CV"
+    },
+    executive: {
+      id: "DIR-002",
+      name: "Ing. Roberto Restrepo",
+      email: "rrestrepo@udemellin.edu.co",
+      role: "directivo",
+      roleLabel: "Directivo / Coordinador Académico",
+      department: "Decanatura de Ingenierías",
+      avatar: "RR"
+    },
+    // Rol de soporte: figura en la matriz de permisos; el prototipo no incluye una vista para él
+    admin: {
+      id: "ADM-001",
+      name: "Ing. Miguel Martínez",
+      email: "admin@udemellin.edu.co",
+      role: "admin",
+      roleLabel: "Administrador de Sistemas",
+      department: "TI & Arquitectura de Software",
+      avatar: "MM"
+    }
+  },
+
+  // Base de datos de estudiantes en seguimiento (HU03, HU04, HU05, HU06)
+  students: [
+    {
+      id: "EST-2026-084",
+      name: "Alejandra Escobar",
+      program: "Ingeniería de Sistemas",
+      semester: 2,
+      attendanceRate: 91,
+      // Variables perceptuales (HU04 - Encuesta Typeform)
+      perceptions: {
+        emotionalWellbeing: 4, // 1 a 5
+        stressLevel: 2,        // 1 a 5
+        academicLoad: 3,       // 1 a 5
+        adaptationLevel: 4,    // 1 a 5
+        lastSurveyDate: "2026-10-05"
+      },
+      courses: [
+        { name: "Cálculo Integral", attendance: 90 },
+        { name: "Programación II", attendance: 95 },
+        { name: "Física Mecánica", attendance: 88 }
+      ],
+      riskLevel: "Bajo",
+      preAlert: null
+    },
+    {
+      id: "EST-2026-102",
+      name: "Juan Pablo Montoya",
+      program: "Ingeniería Industrial",
+      semester: 1,
+      attendanceRate: 74,
+      perceptions: {
+        emotionalWellbeing: 2,
+        stressLevel: 5,
+        academicLoad: 5,
+        adaptationLevel: 2,
+        lastSurveyDate: "2026-10-04"
+      },
+      courses: [
+        { name: "Cálculo Diferencial", attendance: 70 },
+        { name: "Álgebra Lineal", attendance: 75 },
+        { name: "Introducción a la Ingeniería", attendance: 78 }
+      ],
+      riskLevel: "Crítico",
+      preAlert: {
+        id: "PAL-001",
+        date: "2026-10-04 14:20",
+        ruleTriggered: "Asistencia < 80% + Carga percibida crítica (5/5)",
+        status: "Pendiente", // "Pendiente" | "Validada" | "Descartada"
+        tutorNotes: "",
+        validatedBy: null,
+        validationDate: null
+      }
+    },
+    {
+      id: "EST-2026-155",
+      name: "Camila Andrea Henao",
+      program: "Ingeniería Ambiental",
+      semester: 2,
+      attendanceRate: 84,
+      perceptions: {
+        emotionalWellbeing: 2,
+        stressLevel: 4,
+        academicLoad: 4,
+        adaptationLevel: 3,
+        lastSurveyDate: "2026-10-06"
+      },
+      courses: [
+        { name: "Química General", attendance: 82 },
+        { name: "Cálculo Integral", attendance: 85 }
+      ],
+      riskLevel: "Alto",
+      preAlert: {
+        id: "PAL-002",
+        date: "2026-10-06 09:15",
+        ruleTriggered: "Estrés emocional alto (4/5) + Carga percibida crítica (4/5)",
+        status: "Pendiente",
+        tutorNotes: "",
+        validatedBy: null,
+        validationDate: null
+      }
+    },
+    {
+      id: "EST-2026-041",
+      name: "Sebastián Gómez Ríos",
+      program: "Ingeniería Civil",
+      semester: 3,
+      attendanceRate: 78,
+      perceptions: {
+        emotionalWellbeing: 3,
+        stressLevel: 4,
+        academicLoad: 4,
+        adaptationLevel: 3,
+        lastSurveyDate: "2026-10-03"
+      },
+      courses: [
+        { name: "Estática", attendance: 76 },
+        { name: "Topografía", attendance: 80 }
+      ],
+      riskLevel: "Alto",
+      preAlert: {
+        id: "PAL-003",
+        date: "2026-10-03 16:40",
+        ruleTriggered: "Asistencia < 80% en materia clave (Estática)",
+        status: "Validada",
+        tutorNotes: "Se convocó a sesión de tutoría con docente de Estática y consejero.",
+        validatedBy: "Dr. Carlos Valderrama",
+        validationDate: "2026-10-04 10:00"
+      }
+    },
+    {
+      id: "EST-2026-099",
+      name: "Mariana Londoño Cruz",
+      program: "Ingeniería de Sistemas",
+      semester: 1,
+      attendanceRate: 96,
+      perceptions: {
+        emotionalWellbeing: 5,
+        stressLevel: 2,
+        academicLoad: 3,
+        adaptationLevel: 5,
+        lastSurveyDate: "2026-10-07"
+      },
+      courses: [
+        { name: "Algoritmos", attendance: 98 },
+        { name: "Cálculo Diferencial", attendance: 95 }
+      ],
+      riskLevel: "Bajo",
+      preAlert: null
+    },
+    {
+      id: "EST-2026-210",
+      name: "David Felipe Ortiz",
+      program: "Ingeniería de Telecomunicaciones",
+      semester: 2,
+      attendanceRate: 72,
+      perceptions: {
+        emotionalWellbeing: 2,
+        stressLevel: 4,
+        academicLoad: 5,
+        adaptationLevel: 2,
+        lastSurveyDate: "2026-10-02"
+      },
+      courses: [
+        { name: "Circuitos I", attendance: 70 },
+        { name: "Física de Campos", attendance: 74 }
+      ],
+      riskLevel: "Crítico",
+      preAlert: {
+        id: "PAL-004",
+        date: "2026-10-02 11:30",
+        ruleTriggered: "Asistencia general < 75% + Carga percibida máxima",
+        status: "Pendiente",
+        tutorNotes: "",
+        validatedBy: null,
+        validationDate: null
+      }
+    }
+  ],
+
+  // Matriz de Control de Acceso por Roles y Privilegios (HU02)
+  roleMatrix: [
+    {
+      key: "own_consent",
+      permission: "Consultar y aceptar consentimiento informado propio",
+      estudiante: true,
+      tutor: false,
+      directivo: false,
+      admin: true
+    },
+    {
+      key: "survey",
+      permission: "Completar micro-encuestas de bienestar tipo Typeform",
+      estudiante: true,
+      tutor: false,
+      directivo: false,
+      admin: false
+    },
+    {
+      key: "view_academic",
+      permission: "Visualizar asistencias y asignaturas personales",
+      estudiante: true,
+      tutor: true,
+      directivo: true,
+      admin: true
+    },
+    {
+      key: "validate_alerts",
+      permission: "Recibir y validar pre-alertas de deserción (Supervisión Humana)",
+      estudiante: false,
+      tutor: true,
+      directivo: false,
+      admin: false
+    },
+    {
+      key: "view_dashboard",
+      permission: "Acceder al Dashboard macro de permanencia y KPIs",
+      estudiante: false,
+      tutor: true,
+      directivo: true,
+      admin: true
+    },
+    {
+      key: "view_financial",
+      permission: "Ejecutar Simulador Financiero de Retorno (ROI) y Costos",
+      estudiante: false,
+      tutor: false,
+      directivo: true,
+      admin: true
+    },
+    {
+      key: "sync_db",
+      permission: "Sincronizar datos académicos institucionales (HU03)",
+      estudiante: false,
+      tutor: false,
+      directivo: true,
+      admin: true
+    },
+    {
+      key: "config_rules",
+      permission: "Configurar umbrales deterministas del motor de reglas",
+      estudiante: false,
+      tutor: false,
+      directivo: false,
+      admin: true
+    }
+  ],
+
+  // Registros de auditoría de consentimiento y accesos (HU01, HU02)
+  auditLogs: [
+    { date: "2026-10-08 08:30", user: "Alejandra Escobar", action: "Consentimiento informado aceptado (HU01)", ip: "172.16.24.12" },
+    { date: "2026-10-08 09:15", user: "Dr. Carlos Valderrama", action: "Validación de pre-alerta PAL-003 completada (HU06)", ip: "172.16.10.05" },
+    { date: "2026-10-08 10:45", user: "Ing. Roberto Restrepo", action: "Consulta del Dashboard Ejecutivo y ROI (HU07)", ip: "172.16.02.18" },
+    { date: "2026-10-08 11:20", user: "Alejandra Escobar", action: "Ingesta de micro-encuesta semanal de bienestar (HU04)", ip: "172.16.24.12" }
+  ],
+
+  // Análisis de Costos y Viabilidad Financiera (HU09)
+  costBreakdown: {
+    initialInvestmentCOP: 35000000, // Costo de diseño y desarrollo inicial
+    annualOperationalTotalCOP: 42000000,
+    items: [
+      {
+        category: "Infraestructura Cloud SaaS",
+        name: "Servidores, Base de Datos Relacional y Cifrado",
+        annualCOP: 14000000,
+        description: "Alojamiento en nube de alta disponibilidad, backups automáticos y cumplimiento de Ley 1581 (Habeas Data)."
+      },
+      {
+        category: "Mantenimiento & Soporte",
+        name: "Soporte Técnico Continuo y Actualización de Reglas",
+        annualCOP: 12000000,
+        description: "Monitoreo del motor de umbrales deterministas, ajustes de seguridad e integraciones semestrales."
+      },
+      {
+        category: "Acompañamiento Humano",
+        name: "Plataforma de Consejería y Bienestar Universitario",
+        annualCOP: 16000000,
+        description: "Horas dedicadas de tutores para supervisión obligatoria de pre-alertas e intervención preventiva temprana."
+      }
+    ]
+  },
+
+  // Escenarios predefinidos para la Simulación Financiera (HU10)
+  financialScenarios: {
+    conservador: {
+      totalStudents: 1250,
+      baselineDropoutRate: 14.0,
+      semesterTuitionCOP: 6800000,
+      interventionSuccessRate: 20,
+      annualPlatformCostCOP: 42000000
+    },
+    moderado: {
+      totalStudents: 1250,
+      baselineDropoutRate: 16.5,
+      semesterTuitionCOP: 6800000,
+      interventionSuccessRate: 35,
+      annualPlatformCostCOP: 42000000
+    },
+    optimo: {
+      totalStudents: 1500,
+      baselineDropoutRate: 18.0,
+      semesterTuitionCOP: 7200000,
+      interventionSuccessRate: 50,
+      annualPlatformCostCOP: 45000000
+    }
+  },
+
+  // Parámetros por defecto para simulación financiera (HU09, HU10)
+  financialModel: {
+    totalStudents: 1250,          // Estudiantes en primeros semestres
+    baselineDropoutRate: 16.5,    // Tasa de deserción histórica (%)
+    semesterTuitionCOP: 6800000,  // Matrícula promedio semestral en COP ($6.8M COP)
+    interventionSuccessRate: 30,  // % de casos en riesgo rescatados gracias a Ancla
+    annualPlatformCostCOP: 42000000 // Costo operativo anual SaaS/infraestructura en COP
+  },
+
+  // Preguntas de la encuesta Typeform de bienestar (HU04)
+  surveyQuestions: [
+    {
+      id: "emotionalWellbeing",
+      title: "¿Cómo describirías tu estado anímico general esta semana?",
+      subtitle: "Tu respuesta es confidencial y formativa, nunca punitiva.",
+      type: "rating",
+      options: [
+        { value: 1, label: "Muy agotado / desmotivado", icon: "😫" },
+        { value: 2, label: "Con dificultades", icon: "😟" },
+        { value: 3, label: "Regular / Estable", icon: "😐" },
+        { value: 4, label: "Motivado y con energía", icon: "🙂" },
+        { value: 5, label: "Excelente / Muy motivado", icon: "😄" }
+      ]
+    },
+    {
+      id: "academicLoad",
+      title: "¿Cómo percibes el volumen y exigencia de tus asignaturas actuales?",
+      subtitle: "Ayúdanos a entender el nivel de demanda de tus cursos.",
+      type: "rating",
+      options: [
+        { value: 1, label: "Muy liviana", icon: "🟢" },
+        { value: 2, label: "Manejable", icon: "🟡" },
+        { value: 3, label: "Equilibrada", icon: "🟠" },
+        { value: 4, label: "Alta / Difícil de compaginar", icon: "🔴" },
+        { value: 5, label: "Desbordante / Al límite", icon: "🔥" }
+      ]
+    },
+    {
+      id: "stressLevel",
+      title: "¿Qué nivel de estrés o ansiedad sientes frente a tus próximas entregas y parciales?",
+      subtitle: "Queremos apoyarte antes de que afecte tu rendimiento.",
+      type: "rating",
+      options: [
+        { value: 1, label: "Muy bajo / Tranquilo", icon: "🧘" },
+        { value: 2, label: "Bajo", icon: "😌" },
+        { value: 3, label: "Moderado", icon: "😐" },
+        { value: 4, label: "Alto", icon: "😰" },
+        { value: 5, label: "Muy crítico", icon: "🚨" }
+      ]
+    },
+    {
+      id: "adaptationLevel",
+      title: "¿Sientes que cuentas con apoyo y adaptación suficiente a la vida universitaria?",
+      subtitle: "Bienestar estudiantil está listo para acompañarte si lo requieres.",
+      type: "rating",
+      options: [
+        { value: 1, label: "Totalmente aislado", icon: "🌧️" },
+        { value: 2, label: "Poco apoyo", icon: "⛅" },
+        { value: 3, label: "En proceso de adaptación", icon: "🌤️" },
+        { value: 4, label: "Bien adaptado", icon: "☀️" },
+        { value: 5, label: "Totalmente integrado", icon: "🌟" }
+      ]
+    }
+  ]
+};
+
+// Almacenamiento local (mock). Siempre devuelve una copia: la semilla nunca se muta.
+try { localStorage.removeItem("ancla_data_v1"); localStorage.removeItem("ancla_data_v2"); localStorage.removeItem("ancla_data_v3"); } catch (e) { /* ignorar */ }
+
+function getSavedData() {
+  try {
+    const local = localStorage.getItem(STORAGE_KEY);
+    if (local) return JSON.parse(local);
+  } catch (e) {
+    console.warn("Error leyendo datos locales, usando semilla inicial.");
+  }
+  return JSON.parse(JSON.stringify(ANCLA_DATA));
+}
+
+function persistData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
