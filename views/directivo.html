@@ -50,10 +50,6 @@
           <span class="nav-icon">🔐</span>
           <span>Privacidad & Roles</span>
         </a>
-        <a href="#arquitectura" class="nav-link" data-view="view-architecture">
-          <span class="nav-icon">🏛️</span>
-          <span>Arquitectura & BPMN</span>
-        </a>
 
         <div class="nav-section-title" style="margin-top: 18px;">Garantías & Ética</div>
         <a href="#" class="nav-link" id="btnOpenPrivacyModal">
@@ -267,7 +263,7 @@
         <section class="card mb-6">
           <div class="card-header">
             <div>
-              <h2 class="card-title"><span class="card-title-icon">🏷️</span> Estructura de Costos de la Plataforma (HU09)</h2>
+              <h2 class="card-title"><span class="card-title-icon">🏷️</span> Estructura de Costos de la Plataforma</h2>
               <div class="card-subtitle">
                 Estimación de diseño, implementación en la nube y operación anual basada en arquitectura monolítica modular.
               </div>
@@ -287,7 +283,7 @@
         <section class="card">
           <div class="card-header">
             <div>
-              <h2 class="card-title"><span class="card-title-icon">📈</span> Simulador de Impacto Económico y Retención (HU10)</h2>
+              <h2 class="card-title"><span class="card-title-icon">📈</span> Simulador de Impacto Económico y Retención</h2>
               <div class="card-subtitle">
                 Modifica los parámetros para simular escenarios de reducción de deserción y calcular el ROI en tiempo real.
               </div>
@@ -485,7 +481,7 @@
           <div class="card">
             <div class="card-header">
               <div>
-                <h3 class="card-title"><span class="card-title-icon">✍️</span> Consentimiento Informado (HU01)</h3>
+                <h3 class="card-title"><span class="card-title-icon">✍️</span> Consentimiento Informado</h3>
                 <div class="card-subtitle">Solo la persona titular puede autorizarlo o revocarlo, desde su portal.</div>
               </div>
             </div>
@@ -523,7 +519,7 @@
         <div class="card mb-6">
           <div class="card-header">
             <div>
-              <h2 class="card-title"><span class="card-title-icon">👥</span> Matriz de Control de Acceso por Roles y Privilegios (HU02)</h2>
+              <h2 class="card-title"><span class="card-title-icon">👥</span> Matriz de Control de Acceso por Roles y Privilegios</h2>
               <div class="card-subtitle">
                 Garantiza acceso segregado por roles para prevenir el uso indebido o punitivo de la información.
               </div>
@@ -560,188 +556,6 @@
           </div>
           <div class="audit-log-box" id="auditLogsContainer">
             <!-- Se puebla dinámicamente -->
-          </div>
-        </div>
-
-      
-        </section>
-
-        <!-- PESTAÑA: ARQUITECTURA Y BPMN -->
-        <section id="view-architecture" class="view-section">
-
-
-        <!-- BANNER DE JUSTIFICACIÓN ARQUITECTÓNICA -->
-        <div class="banner-consent mb-6">
-          <div class="consent-text">
-            <h4>🏛️ Enfoque Arquitectónico Monolítico Modular de Tres Capas</h4>
-            <p>
-              Diseñado para responder a la necesidad de equilibrar el rigor académico del reto con la agilidad necesaria en un entorno universitario. Evita la sobrecarga de datos y complejidad innecesaria de microservicios, optimiza el manejo de datos relacionales y simplifica el despliegue en plataformas cloud.
-            </p>
-          </div>
-          <button class="btn btn-primary btn-sm" id="btnTestBpmnFlow">
-            🧪 Probar Motor de Reglas
-          </button>
-        </div>
-
-        <!-- TARJETA CON RESULTADO DE PRUEBA EN VIVO -->
-        <div id="bpmnSimResult" class="card mb-6" style="display: none; border-left: 4px solid var(--red-primary);">
-          <!-- Se llena al presionar el botón -->
-        </div>
-
-        <!-- LAS TRES CAPAS DEL SISTEMA -->
-        <div class="layer-arch-grid mb-6">
-
-          <!-- Capa 1: Presentación -->
-          <div class="layer-arch-card">
-            <div class="layer-arch-title">
-              <span>🖥️</span> Capa de Presentación
-            </div>
-            <div class="layer-arch-desc">
-              Separa la interfaz gráfica y los tableros interactivos según el rol del usuario, evitando saturación visual mediante vistas modulares independientes.
-            </div>
-            <ul class="layer-arch-list">
-              <li>Dashboard Ejecutivo Directivo (HU07)</li>
-              <li>Bandeja de Acompañamiento del Tutor (HU06)</li>
-              <li>Portal del Estudiante con Micro-encuestas Typeform (HU04)</li>
-              <li>Simulador Financiero de Retorno ROI (HU10)</li>
-              <li>Padrón y Consulta Académica (HU03)</li>
-            </ul>
-          </div>
-
-          <!-- Capa 2: Lógica del Sistema -->
-          <div class="layer-arch-card">
-            <div class="layer-arch-title">
-              <span>⚙️</span> Capa de Lógica & Reglas
-            </div>
-            <div class="layer-arch-desc">
-              Aloja un motor de reglas determinista y transparente para las alertas de deserción, fundamentado en umbrales cuantitativos y cualitativos.
-            </div>
-            <ul class="layer-arch-list">
-              <li>Motor Determinista de Umbrales (HU05)</li>
-              <li>Protocolo de Pre-Alertas Tempranas (HU08)</li>
-              <li>Flujo de Validación Humana Obligatoria (HU06)</li>
-              <li>Simulador de Retención Estudiantil (HU09, HU10)</li>
-              <li>Control de Roles y Privilegios (HU02)</li>
-            </ul>
-          </div>
-
-          <!-- Capa 3: Capa de Datos -->
-          <div class="layer-arch-card">
-            <div class="layer-arch-title">
-              <span>💾</span> Capa de Datos
-            </div>
-            <div class="layer-arch-desc">
-              Centraliza el almacenamiento seguro garantizando la integridad de la información sensible y el control de accesos.
-            </div>
-            <ul class="layer-arch-list">
-              <li>Base de Datos Estructurada de Asistencias y Asignaturas (HU03)</li>
-              <li>Sincronización masiva con sistema institucional</li>
-              <li>Ingesta de percepciones emocionales (HU04)</li>
-              <li>Consentimiento informado y auditoría (HU01)</li>
-              <li>Almacén persistente local para prototipo ágil</li>
-            </ul>
-          </div>
-
-        </div>
-
-        <!-- DIAGRAMA DE PROCESOS BPMN (FLUJO COMPLETO) -->
-        <div class="card mb-6">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title"><span class="card-title-icon">🔄</span> Modelado de Procesos (Diagrama BPMN)</h2>
-              <div class="card-subtitle">
-                Ciclo completo de seguimiento: desde la captura de percepción hasta la evaluación financiera de la retención.
-              </div>
-            </div>
-          </div>
-
-          <div class="bpmn-timeline">
-
-            <!-- Fase 1: Captura e Ingesta -->
-            <div class="bpmn-step-card">
-              <div class="bpmn-step-header">
-                <div class="bpmn-step-badge">1</div>
-                <div class="bpmn-step-title">Captura e Ingesta</div>
-              </div>
-              <div class="bpmn-step-desc">
-                El estudiante registra su bienestar emocional en encuestas Typeform de 1 sola pregunta, y el sistema sincroniza asistencias institucionales.
-              </div>
-              <span class="bpmn-criteria-tag">Criterio 1: Cumplido ✓</span>
-            </div>
-
-            <!-- Fase 2: Motor Determinista -->
-            <div class="bpmn-step-card">
-              <div class="bpmn-step-header">
-                <div class="bpmn-step-badge">2</div>
-                <div class="bpmn-step-title">Evaluación Lógica</div>
-              </div>
-              <div class="bpmn-step-desc">
-                El motor evalúa si se rebasan los umbrales (< 80% asistencia, estrés >= 4, carga >= 4) y genera automáticamente una pre-alerta temprana.
-              </div>
-              <span class="bpmn-criteria-tag">Criterio 1: Cumplido ✓</span>
-            </div>
-
-            <!-- Fase 3: Supervisión Humana -->
-            <div class="bpmn-step-card">
-              <div class="bpmn-step-header">
-                <div class="bpmn-step-badge">3</div>
-                <div class="bpmn-step-title">Supervisión Humana</div>
-              </div>
-              <div class="bpmn-step-desc">
-                Obligatoriamente el tutor o profesional de bienestar revisa la pre-alerta para validarla y activar acompañamiento, o descartarla como falso positivo.
-              </div>
-              <span class="bpmn-criteria-tag">Criterio 2: Cumplido ✓</span>
-            </div>
-
-            <!-- Fase 4: Visualización & Finanzas -->
-            <div class="bpmn-step-card">
-              <div class="bpmn-step-header">
-                <div class="bpmn-step-badge">4</div>
-                <div class="bpmn-step-title">Visualización & Finanzas</div>
-              </div>
-              <div class="bpmn-step-desc">
-                Los directivos analizan la evolución de permanencia en el dashboard y calculan los beneficios económicos y ROI derivados de la retención lograda.
-              </div>
-              <span class="bpmn-criteria-tag">Criterio 3: Cumplido ✓</span>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- ESTRUCTURA WBS / ETP (5 MÓDULOS) -->
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title"><span class="card-title-icon">📊</span> Estructura de Trabajo (WBS / ETP)</h2>
-              <div class="card-subtitle">División jerárquica de los cinco módulos funcionales del proyecto</div>
-            </div>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            <div class="p-4 bg-[#0f1117] rounded-md border border-[#252a38]">
-              <span class="text-xs text-[#e63946] font-bold block mb-1">MÓDULO 1</span>
-              <strong class="text-white text-sm block mb-1">Frontend</strong>
-              <p class="text-xs text-[#8b96aa]">Interfaces responsivas, tableros interactivos y micro-encuestas Typeform.</p>
-            </div>
-            <div class="p-4 bg-[#0f1117] rounded-md border border-[#252a38]">
-              <span class="text-xs text-[#e63946] font-bold block mb-1">MÓDULO 2</span>
-              <strong class="text-white text-sm block mb-1">Backend</strong>
-              <p class="text-xs text-[#8b96aa]">Lógica de servicio, API de ingesta perceptual y base de datos relacional.</p>
-            </div>
-            <div class="p-4 bg-[#0f1117] rounded-md border border-[#252a38]">
-              <span class="text-xs text-[#e63946] font-bold block mb-1">MÓDULO 3</span>
-              <strong class="text-white text-sm block mb-1">Arquitectura & Seguridad</strong>
-              <p class="text-xs text-[#8b96aa]">Consentimiento informado, privacidad ética, matriz de roles y trazabilidad.</p>
-            </div>
-            <div class="p-4 bg-[#0f1117] rounded-md border border-[#252a38]">
-              <span class="text-xs text-[#e63946] font-bold block mb-1">MÓDULO 4</span>
-              <strong class="text-white text-sm block mb-1">Análisis & Lógica</strong>
-              <p class="text-xs text-[#8b96aa]">Motor determinista por umbrales y supervisión humana obligatoria.</p>
-            </div>
-            <div class="p-4 bg-[#0f1117] rounded-md border border-[#252a38]">
-              <span class="text-xs text-[#e63946] font-bold block mb-1">MÓDULO 5</span>
-              <strong class="text-white text-sm block mb-1">Gestión Financiera</strong>
-              <p class="text-xs text-[#8b96aa]">Estructura de costos SaaS, viabilidad económica y simulador interactivo ROI.</p>
-            </div>
           </div>
         </div>
 
@@ -789,7 +603,6 @@
   <script src="../js/modules/financiero.js"></script>
 <script src="../js/modules/academico.js"></script>
 <script src="../js/modules/privacidad.js"></script>
-<script src="../js/modules/arquitectura.js"></script>
 <script src="../js/modules/directivo.js"></script>
 </body>
 </html>

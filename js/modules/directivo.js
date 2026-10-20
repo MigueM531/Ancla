@@ -19,7 +19,6 @@ const DirectivoApp = {
     "view-financial": "Gestión Financiera, Viabilidad y Simulador ROI",
     "view-students-table": "Base de Datos y Monitoreo Académico Institucional",
     "view-privacy": "Privacidad, Consentimiento y Roles",
-    "view-architecture": "Modelo Arquitectónico Monolítico Modular y BPMN"
   },
 
   init() {
@@ -31,7 +30,6 @@ const DirectivoApp = {
     FinancieroApp.init();
     AcademicoApp.init();
     PrivacidadApp.init();
-    ArquitecturaApp.init();
     document.addEventListener("ancla:data-changed", () => {
       this.renderExecutiveView();
       this.renderProgramBreakdown();
