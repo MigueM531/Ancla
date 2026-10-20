@@ -10,27 +10,53 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
   <style>
-    .login-container {
+    html, body {
+      width: 100%;
       min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      min-height: 100vh !important;
+    }
+
+    .login-container {
+      width: 100%;
+      min-height: 100vh;
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding: 30px 20px;
+      margin: 0 auto;
       background: radial-gradient(circle at 50% 15%, rgba(230, 57, 70, 0.15) 0%, var(--bg-deep) 70%);
       position: relative;
+      box-sizing: border-box;
     }
 
     .login-wrapper {
       width: 100%;
-      max-width: 480px;
+      max-width: 460px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
+      align-items: stretch;
       gap: 20px;
     }
 
     .login-header {
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     .login-logo-badge {
