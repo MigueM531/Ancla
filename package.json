@@ -6,17 +6,26 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "node tests/run.js"
+    "test": "node tests/run.js && node tests/test-api.js",
+    "db:setup": "node db/init.js",
+    "db:test": "node -e \"require('./db/client').testConnection().then(r => console.log(JSON.stringify(r, null, 2)))\""
   },
   "keywords": [
     "ancla",
     "permanencia-estudiantil",
     "monitoreo-temprano",
-    "udemellin"
+    "udemellin",
+    "neon-postgres"
   ],
   "author": "Facultad de Ingenierías - Universidad de Medellín",
   "license": "ISC",
   "engines": {
     "node": ">=16"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^18.0.8",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.1"
   }
 }

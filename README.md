@@ -17,15 +17,23 @@
 
 ## Arquitectura Modular del Proyecto
 
-El proyecto está organizado de manera modular y escalable, dividiendo las vistas, la lógica de negocio y los servicios centrales para facilitar el mantenimiento y la demostración ante clientes o directivas:
+El proyecto está organizado de manera modular y escalable, dividiendo las vistas, la lógica de negocio, los servicios de autenticación y la capa de datos en PostgreSQL (Neon):
 
 ```
 Ancla/
 │
-├── index.html                   # Launcher institucional y enrutador inteligente de inicio
-├── server.js                    # Servidor local HTTP nativo (localhost:3000, 0 dependencias)
-├── package.json                 # Configuración de arranque con npm start
-├── README.md                    # Documentación del proyecto
+├── index.html                   # Pantalla de inicio de sesión institucional integrada con BD
+├── server.js                    # Servidor Node.js con API REST y conexión a Neon PostgreSQL
+├── package.json                 # Scripts de inicio, pruebas y migración de BD
+├── NEON_SETUP.md                # Guía paso a paso para Neon DB y despliegue en la nube
+├── render.yaml / Procfile       # Configuraciones de despliegue en Render y Railway
+├── Dockerfile / .dockerignore   # Configuración de despliegue en contenedores Docker
+│
+├── db/                          # Capa de Base de Datos PostgreSQL (Neon)
+│   ├── client.js                # Cliente de conexión con Pool, SSL y fallback local
+│   ├── init.js                  # Script de migración y aprovisionamiento automático
+│   ├── schema.sql               # Esquema DDL (roles, users, students, pre_alerts, etc.)
+│   └── seed.sql                 # Datos semilla con usuarios de los 3 roles y contraseñas hasheadas
 │
 ├── assets/
 │   └── logo.svg                 # Logo oficial vectorial de ANCLA
@@ -39,13 +47,13 @@ Ancla/
 │   └── estudiante.html          # Portal del Estudiante (encuesta Typeform, materias, privacidad)
 │
 └── js/
-    ├── shared.js                # Lógica compartida (navegación, selector de rol, modales, toasts)
+    ├── shared.js                # Lógica compartida (sesión activa, cierre de sesión, navegación)
     │
     ├── core/                    # Capa central de datos y motores de cálculo
-    │   ├── data.js              # Semilla de datos estructurados y persistencia localStorage
+    │   ├── data.js              # Semilla de datos estructurados y persistencia
     │   ├── rulesEngine.js       # Motor determinista de reglas por umbrales (HU05)
     │   ├── financialSimulator.js# Motor de cálculo financiero de retención y ROI (HU09, HU10)
-    │   └── apiService.js        # Capa de servicio preparada para backend REST / Base de datos
+    │   └── apiService.js        # Servicio API con endpoints de login/logout y transacciones
     │
     └── modules/                 # Controladores específicos de cada dashboard
         ├── directivo.js         # Lógica interactiva del panel directivo y simulador
@@ -55,43 +63,63 @@ Ancla/
 
 ---
 
-## ¿Cómo ejecutar el proyecto?
+## 👥 Usuarios y Credenciales Demo
 
-### Opción 1: Servidor Local (Recomendado para la presentación)
-Puedes ejecutar el servidor localhost nativo de Node.js (no requiere instalar dependencias adicionales):
+El sistema cuenta con tres perfiles principales registrados en la base de datos:
 
-```bash
-npm start
-```
-O directamente:
-```bash
-node server.js
-```
+| Rol Institucional | Nombre | Correo Institucional | Contraseña |
+| :--- | :--- | :--- | :--- |
+| **Estudiante** | Alejandra Escobar | `aescobar@udemellin.edu.co` | `Estudiante2026*` |
+| **Tutor / Bienestar** | Dr. Carlos Valderrama | `cvalderrama@udemellin.edu.co` | `Tutor2026*` |
+| **Directivo / Coordinador** | Ing. Roberto Restrepo | `rrestrepo@udemellin.edu.co` | `Directivo2026*` |
 
-El servidor quedará disponible en:
-**`http://localhost:3000`**
-
-Rutas directas amigables:
-* **Directivo:** `http://localhost:3000/directivo`
-* **Tutor / Bienestar:** `http://localhost:3000/tutor`
-* **Estudiante:** `http://localhost:3000/estudiante`
-
-### Opción 2: Sin servidor (Doble clic)
-El proyecto también funciona abriendo directamente cualquier archivo `.html` en tu navegador (`index.html` o los archivos dentro de `views/`), ya que utiliza rutas relativas universales y almacenamiento en `localStorage`.
+*En la pantalla de inicio de sesión (`index.html`) se dispone de botones de 1 clic para autenticar con cualquiera de los tres perfiles.*
 
 ---
 
-## Conexión y Sincronización entre Dashboards
+## ¿Cómo ejecutar el proyecto localmente?
 
-Los dashboards comparten un almacén de datos (`localStorage`). Los cambios se ven al navegar entre vistas y, con varias pestañas abiertas, se actualizan solos (evento `storage`). En modo `file://` algunos navegadores (p. ej. Firefox) aíslan el almacenamiento por archivo: para la demo usa `npm start`.
+1. Instalar dependencias:
+   ```bash
+   npm install
+   ```
+2. Iniciar el servidor:
+   ```bash
+   npm start
+   ```
+3. Abrir en el navegador:
+   * **Inicio de Sesión:** [http://localhost:3000](http://localhost:3000)
+   * **Directivo:** [http://localhost:3000/directivo](http://localhost:3000/directivo)
+   * **Tutor:** [http://localhost:3000/tutor](http://localhost:3000/tutor)
+   * **Estudiante:** [http://localhost:3000/estudiante](http://localhost:3000/estudiante)
 
-### Módulos integrados desde la rama Branch2A (pestañas del panel Directivo)
-Se mantiene el flujo original de navegación (selector de rol + pestañas internas). El panel Directivo incluye: **Dashboard** (permanencia por programa y casos críticos), **Gestión Financiera & ROI** (HU09/HU10: costos y escenarios), **Padrón Académico & DB** (HU03: filtros y sincronización simulada), **Privacidad & Roles** (HU01/HU02: matriz de permisos aplicada por `ApiService` y auditoría) y **Arquitectura & BPMN**. El rol Administrador consta en la matriz, pero el prototipo no incluye una vista para él.
+---
 
-Pruebas de la lógica de negocio: `npm test`.
+## 🐘 Conexión con Neon PostgreSQL
 
-Detalle de la sincronización:
-1. **Selector de Rol en el Sidebar:** En cualquier dashboard puedes usar el menú desplegable para cambiar entre Directivo, Tutor y Estudiante; la interfaz navegará automáticamente a la vista correspondiente.
-2. **Sincronización de Datos:**
-   * Si el **Tutor** valida o descarta una pre-alerta como "Falso Positivo" en su bandeja, al pasar a la vista de **Directivo** los KPIs y la distribución de riesgo se actualizan inmediatamente.
-   * Si el **Estudiante** completa su encuesta de bienestar, el motor de reglas re-evalúa sus indicadores y las nuevas alertas se reflejan al instante en la bandeja del **Tutor**.
+Para conectar la base de datos Serverless en Neon:
+
+1. Obtén tu cadena de conexión en [https://neon.tech](https://neon.tech).
+2. Pégala en el archivo `.env`:
+   ```env
+   DATABASE_URL=postgresql://neondb_owner:PASSWORD@ep-xyz.us-east-2.aws.neon.tech/neondb?sslmode=require
+   ```
+3. Ejecuta la migración automática:
+   ```bash
+   npm run db:setup
+   ```
+4. Comprueba la conexión:
+   ```bash
+   npm run db:test
+   ```
+
+*Para más detalles y opciones de despliegue en la nube (Render, Railway, Docker), consulta la guía detallada en [NEON_SETUP.md](file:///c:/Users/Cristian%20Toro/Documents/Universidad%20de%20Medellín/26-2/Proyecto%20de%20Ingeniería%20I/Proyecto/Ancla/NEON_SETUP.md).*
+
+---
+
+## 🧪 Pruebas Unitarias y de API
+
+Para correr la suite completa de pruebas:
+```bash
+npm test
+```

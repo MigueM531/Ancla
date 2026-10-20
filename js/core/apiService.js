@@ -205,6 +205,64 @@ const ApiService = {
     this._audit(state, "Sincronización institucional simulada: asistencias reevaluadas (HU03)");
     persistData(state);
     return { success: true, studentsCount: state.students.length };
+  },
+  /**
+   * Autenticación contra API / Neon DB con fallback local
+   */
+  async login(email, password) {
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Credenciales inválidas");
+      }
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem("ancla_token", data.token);
+        localStorage.setItem("ancla_current_user", JSON.stringify(data.user));
+        localStorage.setItem("ancla_current_role", data.user.role_code);
+      }
+      return data;
+    } catch (err) {
+      if (err.message && (err.message.includes("Credenciales") || err.message.includes("inactiva"))) {
+        throw err;
+      }
+      const clean = String(email || "").trim().toLowerCase();
+      const state = getSavedData();
+      const user = Object.values(state.users).find((u) => u && u.email && u.email.toLowerCase() === clean);
+      if (user) {
+        if (typeof localStorage !== "undefined") {
+          localStorage.setItem("ancla_current_user", JSON.stringify(user));
+          localStorage.setItem("ancla_current_role", user.role);
+        }
+        return { success: true, user };
+      }
+      throw err;
+    }
+  },
+
+  logout() {
+    if (typeof localStorage !== "undefined") {
+      localStorage.removeItem("ancla_token");
+      localStorage.removeItem("ancla_current_user");
+      localStorage.removeItem("ancla_current_role");
+    }
+    try {
+      fetch("/api/auth/logout", { method: "POST" });
+    } catch (e) {}
+  },
+
+  getCurrentUser() {
+    try {
+      if (typeof localStorage === "undefined") return null;
+      const raw = localStorage.getItem("ancla_current_user");
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
   }
 };
 

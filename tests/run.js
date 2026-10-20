@@ -3,6 +3,7 @@ const assert = require("assert");
 const fs = require("fs");
 const vm = require("vm");
 const path = require("path");
+const db = require("../db/client");
 
 const store = {};
 const ctx = vm.createContext({
@@ -53,8 +54,7 @@ const tests = {
     const r = FinancialSimulator.calculateImpact({ totalStudents: 500, baselineDropoutRate: 5, semesterTuitionCOP: 3000000, interventionSuccessRate: 10, annualPlatformCostCOP: 80000000 });
     assert.ok(r.netEconomicBenefit < 0 && r.roiPercentage < 0);
     assert.strictEqual(FinancialSimulator.calculateImpact({ interventionSuccessRate: 0 }).costPerRetainedStudent, null);
-  }
-  ,
+  },
   "los costos del desglose suman la operación anual"() {
     const c = ANCLA_DATA.costBreakdown;
     assert.strictEqual(c.items.reduce((s, i) => s + i.annualCOP, 0), c.annualOperationalTotalCOP);
@@ -87,6 +87,23 @@ const asyncTests = {
   async "solo la persona titular cambia el consentimiento"() {
     store.ancla_current_role = "directivo";
     await assert.rejects(ApiService.submitPrivacyConsent("EST-2026-084", false), /PERMISSION_DENIED/);
+  },
+  async "el servicio de autenticación valida los 3 perfiles principales (Estudiante, Tutor, Directivo)"() {
+    const est = await db.authenticateUser("aescobar@udemellin.edu.co", "Estudiante2026*");
+    assert.strictEqual(est.role_code, "estudiante");
+    assert.strictEqual(est.code, "EST-2026-084");
+
+    const tut = await db.authenticateUser("cvalderrama@udemellin.edu.co", "Tutor2026*");
+    assert.strictEqual(tut.role_code, "tutor");
+    assert.strictEqual(tut.code, "TUT-104");
+
+    const dir = await db.authenticateUser("rrestrepo@udemellin.edu.co", "Directivo2026*");
+    assert.strictEqual(dir.role_code, "directivo");
+    assert.strictEqual(dir.code, "DIR-002");
+  },
+  async "un login con contraseña errónea o usuario inexistente es rechazado"() {
+    await assert.rejects(db.authenticateUser("aescobar@udemellin.edu.co", "clave_invalida"), /Credenciales inválidas/);
+    await assert.rejects(db.authenticateUser("fantasma@udemellin.edu.co", "cualquiera"), /Credenciales inválidas/);
   }
 };
 

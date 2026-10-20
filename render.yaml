@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: ancla-sistema-permanencia
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false # Pega aquí la URI de conexión de tu proyecto en Neon

@@ -75,6 +75,7 @@ const SharedApp = {
     this.bindResetDemo();
     this.updatePendingAlertsBadge();
     this.renderUserInfo();
+    this.bindLogout();
     this.bindGlobalEvents();
   },
 
@@ -125,23 +126,36 @@ const SharedApp = {
    */
   renderUserInfo() {
     if (!this.currentRole) return;
-    const data = getSavedData();
-    const roleKeyMap = {
-      directivo: "executive",
-      tutor: "tutor",
-      estudiante: "student"
-    };
-    const userKey = roleKeyMap[this.currentRole] || this.currentRole;
-    const user = data.users[userKey];
-    if (!user) return;
+    let activeUser = null;
+    try {
+      const stored = localStorage.getItem("ancla_current_user");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && (parsed.role_code === this.currentRole || parsed.role === this.currentRole)) {
+          activeUser = parsed;
+        }
+      }
+    } catch (e) {}
+
+    if (!activeUser) {
+      const data = getSavedData();
+      const roleKeyMap = {
+        directivo: "executive",
+        tutor: "tutor",
+        estudiante: "student"
+      };
+      const userKey = roleKeyMap[this.currentRole] || this.currentRole;
+      activeUser = data.users[userKey];
+    }
+    if (!activeUser) return;
 
     const nameEl = document.getElementById("sidebarUserName");
     const roleEl = document.getElementById("sidebarUserRole");
     const avatarEl = document.getElementById("sidebarUserAvatar");
 
-    if (nameEl) nameEl.textContent = user.name;
-    if (roleEl) roleEl.textContent = user.roleLabel;
-    if (avatarEl) avatarEl.textContent = user.avatar;
+    if (nameEl) nameEl.textContent = activeUser.name;
+    if (roleEl) roleEl.textContent = activeUser.roleLabel || activeUser.role_label || activeUser.role;
+    if (avatarEl) avatarEl.textContent = activeUser.avatar || activeUser.name.slice(0, 2).toUpperCase();
   },
 
   /**
@@ -316,5 +330,25 @@ const SharedApp = {
         }
       });
     }
+  }
+  /**
+   * Cierre de sesión y retorno a pantalla de login
+   */
+  bindLogout() {
+    document.querySelectorAll("#btnLogout, .btn-logout").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const ok = window.confirm("¿Deseas cerrar tu sesión en el sistema ANCLA?");
+        if (ok) {
+          localStorage.removeItem("ancla_token");
+          localStorage.removeItem("ancla_current_user");
+          localStorage.removeItem("ancla_current_role");
+          try {
+            fetch("/api/auth/logout", { method: "POST" });
+          } catch (err) {}
+          window.location.href = "../index.html";
+        }
+      });
+    });
   }
 };

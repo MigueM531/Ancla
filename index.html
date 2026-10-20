@@ -3,30 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ANCLA - Sistema de Monitoreo Temprano y Permanencia Estudiantil</title>
+  <title>ANCLA - Inicio de Sesión Institucional | Universidad de Medellín</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
   <style>
-    .launcher-container {
+    .login-container {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 30px;
-      background: radial-gradient(circle at 50% 20%, rgba(230, 57, 70, 0.12) 0%, var(--bg-deep) 70%);
+      padding: 24px;
+      background: radial-gradient(circle at 50% 15%, rgba(230, 57, 70, 0.15) 0%, var(--bg-deep) 70%);
+      position: relative;
     }
-    .launcher-header {
+
+    .login-wrapper {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .login-header {
       text-align: center;
-      margin-bottom: 40px;
-      max-width: 620px;
     }
-    .launcher-logo-badge {
-      width: 72px;
-      height: 72px;
+
+    .login-logo-badge {
+      width: 76px;
+      height: 76px;
       margin: 0 auto 16px;
       background: var(--bg-card);
       border: 1px solid var(--border-card);
@@ -34,168 +43,519 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 25px var(--red-glow);
+      box-shadow: 0 0 30px var(--red-glow);
     }
-    .launcher-logo-badge img {
-      width: 48px;
-      height: 48px;
+
+    .login-logo-badge img {
+      width: 50px;
+      height: 50px;
     }
-    .launcher-title {
+
+    .login-title {
       font-size: 2.2rem;
-      font-weight: 800;
+      font-weight: 900;
       color: var(--text-white);
-      letter-spacing: 1px;
-      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
     }
-    .launcher-subtitle {
-      font-size: 0.95rem;
+
+    .login-subtitle {
+      font-size: 0.88rem;
       color: var(--text-secondary);
       line-height: 1.5;
     }
-    .launcher-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(240px, 300px));
-      gap: 22px;
-      max-width: 960px;
-      width: 100%;
+
+    .db-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 12px;
+      background: rgba(30, 33, 48, 0.7);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 10px;
     }
-    .launcher-card {
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffb142;
+    }
+
+    .status-dot.online {
+      background: #00b894;
+      box-shadow: 0 0 8px #00b894;
+    }
+
+    .login-card {
       background: var(--bg-card);
       border: 1px solid var(--border-card);
       border-radius: var(--radius-md);
-      padding: 26px 22px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      text-decoration: none;
-      transition: var(--transition);
+      padding: 30px 28px;
       box-shadow: var(--shadow-card);
       position: relative;
-      overflow: hidden;
     }
-    .launcher-card::before {
+
+    .login-card::before {
       content: "";
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       height: 3px;
-      background: transparent;
-      transition: var(--transition);
+      background: linear-gradient(90deg, var(--red-primary), #ff7675);
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
     }
-    .launcher-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--border-focus);
-      background: var(--bg-card-hover);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-    }
-    .launcher-card:hover::before {
-      background: var(--red-primary);
-    }
-    .launcher-card-icon {
-      font-size: 2.4rem;
-      margin-bottom: 14px;
-    }
-    .launcher-card-role {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--text-white);
-      margin-bottom: 6px;
-    }
-    .launcher-card-desc {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
+
+    .form-group {
       margin-bottom: 18px;
-      flex: 1;
-    }
-    .launcher-card-btn {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--red-hover);
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 6px;
     }
-    .launcher-footer {
-      margin-top: 40px;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      text-align: center;
+
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-white);
+      display: flex;
+      justify-content: space-between;
     }
-    @media (max-width: 820px) {
-      .launcher-grid {
-        grid-template-columns: 1fr;
-      }
+
+    .form-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 11px 14px 11px 38px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      color: var(--text-white);
+      font-size: 0.88rem;
+      outline: none;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+
+    .form-input:focus {
+      border-color: var(--red-primary);
+      box-shadow: 0 0 0 3px var(--red-bg-subtle);
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      font-size: 1rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 4px;
+      transition: var(--transition);
+    }
+
+    .toggle-password:hover {
+      color: var(--text-white);
+    }
+
+    .alert-banner {
+      display: none;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      margin-bottom: 16px;
+      line-height: 1.4;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .alert-banner.error {
+      display: block;
+      background: rgba(230, 57, 70, 0.15);
+      border: 1px solid var(--red-primary);
+      color: #ff7675;
+    }
+
+    .alert-banner.success {
+      display: block;
+      background: rgba(0, 184, 148, 0.15);
+      border: 1px solid #00b894;
+      color: #55efc4;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      margin-top: 6px;
+    }
+
+    .demo-users-box {
+      background: rgba(19, 22, 30, 0.7);
+      border: 1px dashed var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+
+    .demo-users-title {
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .demo-users-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .demo-user-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+      color: var(--text-white);
+    }
+
+    .demo-user-btn:hover {
+      border-color: var(--red-hover);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+    }
+
+    .demo-user-role {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .demo-user-name {
+      font-size: 0.68rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .active-session-card {
+      display: none;
+      background: rgba(0, 184, 148, 0.1);
+      border: 1px solid rgba(0, 184, 148, 0.4);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .login-footer {
+      text-align: center;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .login-footer a {
+      color: var(--text-secondary);
+      text-decoration: underline;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
 
-  <div class="launcher-container">
-    <div class="launcher-header">
-      <div class="launcher-logo-badge">
-        <img src="assets/logo.svg" alt="Logo de Ancla">
+  <div class="login-container">
+    <div class="login-wrapper">
+
+      <!-- ENCABEZADO INSTITUCIONAL -->
+      <header class="login-header">
+        <div class="login-logo-badge">
+          <img src="assets/logo.svg" alt="Logo ANCLA">
+        </div>
+        <h1 class="login-title">ANCLA<span style="color: var(--red-primary);">.</span></h1>
+        <p class="login-subtitle">
+          Sistema de Monitoreo Temprano, Análisis y Alerta para la Permanencia Estudiantil<br>
+          <span style="color: var(--text-muted); font-size: 0.78rem;">Facultad de Ingenierías • Universidad de Medellín</span>
+        </p>
+
+        <!-- Indicador de conexión a Neon PostgreSQL -->
+        <div class="db-status-pill" id="dbStatusPill" title="Comprobando enlace a Neon PostgreSQL...">
+          <div class="status-dot" id="dbStatusDot"></div>
+          <span id="dbStatusText">Detectando Base de Datos...</span>
+        </div>
+      </header>
+
+      <!-- TARJETA DE SESIÓN PREVIA SI EXISTE -->
+      <div class="active-session-card" id="activeSessionCard">
+        <div>
+          <div style="font-size: 0.82rem; font-weight: 600; color: #55efc4;">Sesión Activa Detectada</div>
+          <div style="font-size: 0.75rem; color: var(--text-primary);" id="activeSessionDesc">Usuario en sesión</div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <a href="#" class="btn btn-primary btn-sm" id="btnResumeSession">Ingresar →</a>
+          <button class="btn btn-secondary btn-sm" id="btnClearSession" title="Cerrar esta sesión">Cambiar</button>
+        </div>
       </div>
-      <h1 class="launcher-title">ANCLA<span style="color: var(--red-primary);">.</span></h1>
-      <p class="launcher-subtitle">
-        Sistema de Monitoreo Temprano, Análisis y Alerta para la Permanencia Estudiantil<br>
-        <span style="font-size: 0.85rem; color: var(--text-muted);">Facultad de Ingenierías • Universidad de Medellín</span>
-      </p>
-    </div>
 
-    <div class="launcher-grid">
-      <!-- Tarjeta 1: Directivo -->
-      <a href="views/directivo.html" class="launcher-card" onclick="localStorage.setItem('ancla_current_role', 'directivo')">
-        <div class="launcher-card-icon">📊</div>
-        <div class="launcher-card-role">Directivo / Decanatura</div>
-        <div class="launcher-card-desc">
-          Dashboard ejecutivo de indicadores, distribución de riesgo, padrón de estudiantes y simulador financiero ROI.
+      <!-- FORMULARIO PRINCIPAL DE LOGIN -->
+      <main class="login-card">
+        <div class="alert-banner" id="loginAlert"></div>
+
+        <form id="loginForm" autocomplete="on">
+          <div class="form-group">
+            <label class="form-label" for="loginEmail">
+              <span>Correo Electrónico Institucional</span>
+            </label>
+            <div class="form-input-wrapper">
+              <span class="input-icon">✉️</span>
+              <input
+                type="email"
+                id="loginEmail"
+                class="form-input"
+                placeholder="usuario@udemellin.edu.co"
+                required
+                autofocus
+                autocomplete="username"
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">
+              <span>Contraseña</span>
+            </label>
+            <div class="form-input-wrapper">
+              <span class="input-icon">🔒</span>
+              <input
+                type="password"
+                id="loginPassword"
+                class="form-input"
+                placeholder="••••••••••••"
+                required
+                autocomplete="current-password"
+              >
+              <button type="button" class="toggle-password" id="btnTogglePassword" title="Mostrar/Ocultar contraseña">👁️</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-login" id="btnLoginSubmit">
+            <span id="loginBtnText">Iniciar Sesión en ANCLA</span>
+          </button>
+        </form>
+      </main>
+
+      <!-- SECTOR DE ACCESO RÁPIDO PARA EVALUACIÓN / DEMO -->
+      <section class="demo-users-box">
+        <div class="demo-users-title">
+          <span>⚡ Acceso Rápido por Perfil (1 Clic)</span>
+          <span style="color: var(--red-hover); font-size: 0.7rem;">Cuentas Demo</span>
         </div>
-        <div class="launcher-card-btn">Ingresar al Panel →</div>
-      </a>
+        <div class="demo-users-grid">
+          
+          <!-- Botón 1: Estudiante -->
+          <button type="button" class="demo-user-btn" data-email="aescobar@udemellin.edu.co" data-pass="Estudiante2026*" data-role="estudiante">
+            <span style="font-size: 1.3rem;">🎓</span>
+            <span class="demo-user-role">Estudiante</span>
+            <span class="demo-user-name">Alejandra E.</span>
+          </button>
 
-      <!-- Tarjeta 2: Tutor -->
-      <a href="views/tutor.html" class="launcher-card" onclick="localStorage.setItem('ancla_current_role', 'tutor')">
-        <div class="launcher-card-icon">🛡️</div>
-        <div class="launcher-card-role">Tutor / Bienestar</div>
-        <div class="launcher-card-desc">
-          Bandeja de pre-alertas tempranas con supervisión humana obligatoria, filtro por estados y padrón de consejería.
+          <!-- Botón 2: Tutor -->
+          <button type="button" class="demo-user-btn" data-email="cvalderrama@udemellin.edu.co" data-pass="Tutor2026*" data-role="tutor">
+            <span style="font-size: 1.3rem;">🛡️</span>
+            <span class="demo-user-role">Tutor</span>
+            <span class="demo-user-name">Dr. Valderrama</span>
+          </button>
+
+          <!-- Botón 3: Directivo -->
+          <button type="button" class="demo-user-btn" data-email="rrestrepo@udemellin.edu.co" data-pass="Directivo2026*" data-role="directivo">
+            <span style="font-size: 1.3rem;">📊</span>
+            <span class="demo-user-role">Directivo</span>
+            <span class="demo-user-name">Ing. Restrepo</span>
+          </button>
         </div>
-        <div class="launcher-card-btn">Ingresar a Bandeja →</div>
-      </a>
+      </section>
 
-      <!-- Tarjeta 3: Estudiante -->
-      <a href="views/estudiante.html" class="launcher-card" onclick="localStorage.setItem('ancla_current_role', 'estudiante')">
-        <div class="launcher-card-icon">🎓</div>
-        <div class="launcher-card-role">Portal Estudiante</div>
-        <div class="launcher-card-desc">
-          Seguimiento de asistencias, consentimiento ético de datos y encuesta de bienestar interactiva Typeform.
-        </div>
-        <div class="launcher-card-btn">Ingresar al Portal →</div>
-      </a>
-    </div>
+      <!-- PIE INSTITUCIONAL -->
+      <footer class="login-footer">
+        <p>
+          Uso formativo y no punitivo de datos conforme a la Ley 1581 de 2012.<br>
+          Supervisión humana obligatoria en toda pre-alerta de permanencia.<br>
+          <strong>ANCLA v1.0 • Facultad de Ingenierías • 2026-2</strong>
+        </p>
+      </footer>
 
-    <div class="launcher-footer">
-      <span id="launcherFooter">Elige tu perfil para continuar.</span>
     </div>
   </div>
 
+  <!-- SCRIPTS DE AUTENTICACIÓN -->
+  <script src="js/core/data.js"></script>
+  <script src="js/core/rulesEngine.js"></script>
+  <script src="js/core/financialSimulator.js"></script>
+  <script src="js/core/apiService.js"></script>
+
   <script>
-    // Retoma la última vista solo si el rol guardado es válido; el usuario puede cancelar
-    const ROLES = ["directivo", "tutor", "estudiante"];
-    const saved = localStorage.getItem("ancla_current_role");
-    const footer = document.getElementById("launcherFooter");
-    if (ROLES.includes(saved)) {
-      const timer = setTimeout(() => window.location.replace(`views/${saved}.html`), 3000);
-      footer.innerHTML = `Retomando tu última vista (<strong>${saved}</strong>) en 3 s… <a href="#" id="cancelRedirect" style="color:var(--red-hover)">Cancelar</a>`;
-      document.getElementById("cancelRedirect").addEventListener("click", (e) => {
-        e.preventDefault();
-        clearTimeout(timer);
-        footer.textContent = "Elige tu perfil para continuar.";
+    (function () {
+      const emailInput = document.getElementById("loginEmail");
+      const passInput = document.getElementById("loginPassword");
+      const form = document.getElementById("loginForm");
+      const alertBox = document.getElementById("loginAlert");
+      const submitBtn = document.getElementById("btnLoginSubmit");
+      const btnText = document.getElementById("loginBtnText");
+      const togglePass = document.getElementById("btnTogglePassword");
+      const dbDot = document.getElementById("dbStatusDot");
+      const dbText = document.getElementById("dbStatusText");
+      const dbPill = document.getElementById("dbStatusPill");
+      const activeCard = document.getElementById("activeSessionCard");
+      const activeDesc = document.getElementById("activeSessionDesc");
+      const resumeBtn = document.getElementById("btnResumeSession");
+      const clearBtn = document.getElementById("btnClearSession");
+
+      // 1. Verificar estado de la base de datos (Neon PostgreSQL)
+      async function checkDatabaseHealth() {
+        try {
+          const res = await fetch("/api/health");
+          if (!res.ok) throw new Error("Servidor no responde");
+          const data = await res.json();
+          if (data.database && data.database.connected) {
+            dbDot.classList.add("online");
+            dbText.textContent = "Neon PostgreSQL Conectado";
+            dbPill.title = `Conectado a ${data.database.provider} (${data.database.database})`;
+          } else {
+            dbDot.classList.remove("online");
+            dbText.textContent = "Modo Local (Listo para Neon)";
+            dbPill.title = data.database?.detail || "Base de datos local con fallback seguro";
+          }
+        } catch (e) {
+          dbDot.classList.remove("online");
+          dbText.textContent = "Modo Local Demo";
+        }
+      }
+      checkDatabaseHealth();
+
+      // 2. Comprobar si hay sesión previa guardada
+      const currentUser = ApiService.getCurrentUser();
+      const currentRole = localStorage.getItem("ancla_current_role");
+      if (currentUser && currentRole) {
+        activeCard.style.display = "flex";
+        activeDesc.innerHTML = `<strong>${currentUser.name || "Usuario"}</strong> (${currentUser.role_label || currentRole})`;
+        resumeBtn.href = `views/${currentRole}.html`;
+      }
+
+      clearBtn.addEventListener("click", () => {
+        ApiService.logout();
+        activeCard.style.display = "none";
+        showAlert("Sesión anterior limpiada. Puedes ingresar con otra cuenta.", "success");
       });
-    }
+
+      // 3. Mostrar / Ocultar contraseña
+      togglePass.addEventListener("click", () => {
+        const isPass = passInput.type === "password";
+        passInput.type = isPass ? "text" : "password";
+        togglePass.textContent = isPass ? "🙈" : "👁️";
+      });
+
+      // 4. Mostrar alerta
+      function showAlert(msg, type = "error") {
+        alertBox.className = `alert-banner ${type}`;
+        alertBox.textContent = msg;
+        alertBox.style.display = "block";
+      }
+
+      function clearAlert() {
+        alertBox.style.display = "none";
+        alertBox.textContent = "";
+      }
+
+      // 5. Botones de acceso rápido Demo
+      document.querySelectorAll(".demo-user-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          emailInput.value = btn.dataset.email;
+          passInput.value = btn.dataset.pass;
+          clearAlert();
+          // Efecto de feedback visual y envío automático
+          submitBtn.focus();
+          handleLogin(btn.dataset.email, btn.dataset.pass);
+        });
+      });
+
+      // 6. Proceso de Login
+      async function handleLogin(email, password) {
+        clearAlert();
+        submitBtn.disabled = true;
+        btnText.innerHTML = '<span class="spinner"></span> Verificando credenciales…';
+
+        try {
+          const result = await ApiService.login(email, password);
+          const user = result.user;
+          const targetRole = user.role_code || user.role || "estudiante";
+
+          showAlert(`¡Bienvenido, ${user.name}! Redirigiendo a tu módulo institucional…`, "success");
+
+          setTimeout(() => {
+            window.location.href = `views/${targetRole}.html`;
+          }, 600);
+        } catch (err) {
+          showAlert(err.message || "Error al autenticar. Verifica tu correo y contraseña.", "error");
+          submitBtn.disabled = false;
+          btnText.textContent = "Iniciar Sesión en ANCLA";
+        }
+      }
+
+      // 7. Envío del formulario
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = emailInput.value.trim();
+        const pass = passInput.value.trim();
+        if (!email || !pass) {
+          showAlert("Por favor ingresa tu correo y contraseña.", "error");
+          return;
+        }
+        handleLogin(email, pass);
+      });
+    })();
   </script>
 </body>
 </html>
