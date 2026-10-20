@@ -330,7 +330,7 @@ const SharedApp = {
         }
       });
     }
-  }
+  },
   /**
    * Cierre de sesión y retorno a pantalla de login
    */
@@ -346,7 +346,7 @@ const SharedApp = {
           try {
             fetch("/api/auth/logout", { method: "POST" });
           } catch (err) {}
-          window.location.href = "../index.html";
+          window.location.href = "/";
         }
       });
     });
