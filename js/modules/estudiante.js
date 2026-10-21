@@ -136,6 +136,9 @@ const EstudianteApp = {
           if (this.surveyStep < total - 1) {
             this.surveyStep++;
             this.renderSurveyStep();
+          } else {
+            // Al seleccionar la última opción, finaliza automáticamente
+            this.submitStudentSurvey();
           }
         }, 220);
       });
@@ -153,23 +156,16 @@ const EstudianteApp = {
       }
     };
 
-    if (this.surveyStep === total - 1) {
-      btnNext.textContent = "Finalizar y Guardar";
-      btnNext.className = "btn btn-primary";
-      btnNext.onclick = () => this.submitStudentSurvey();
-    } else {
-      btnNext.textContent = "Siguiente →";
-      btnNext.className = "btn btn-secondary";
-      btnNext.onclick = () => {
-        if (!this.surveyAnswers[q.id]) {
-          SharedApp.showToast("Selecciona una opción para continuar.", "warning");
-          return;
-        }
-        if (this.surveyStep < total - 1) {
-          this.surveyStep++;
-          this.renderSurveyStep();
-        }
-      };
+    // El botón Siguiente se removió porque cada opción avanza automáticamente
+    if (btnNext) {
+      if (this.surveyStep === total - 1 && this.surveyAnswers[q.id]) {
+        btnNext.style.display = "inline-flex";
+        btnNext.textContent = "Finalizar y Guardar";
+        btnNext.className = "btn btn-primary btn-sm";
+        btnNext.onclick = () => this.submitStudentSurvey();
+      } else {
+        btnNext.style.display = "none";
+      }
     }
   },
 
