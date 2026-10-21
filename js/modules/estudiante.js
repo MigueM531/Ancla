@@ -5,7 +5,7 @@
  * Funcionalidades:
  * - Indicadores personales de permanencia y rendimiento
  * - Gestión de consentimiento informado y ética de datos (HU01)
- * - Encuesta de bienestar y micro-pulsos estilo Typeform (HU04)
+ * - Encuesta de bienestar y micro-pulsos estilo Typeform (HU04), con rotación de sectores
  * - Asignaturas matriculadas con asistencias
  */
 
@@ -19,6 +19,8 @@ const EstudianteApp = {
   },
   surveyStep: 0,
   surveyAnswers: {},
+  currentBattery: null,      // batería (sector) que corresponde responder ahora
+  showSupportNotice: false,  // se activa si el ítem de cuidado marcó alerta en el último envío
 
   init() {
     SharedApp.init("estudiante", this.titleMap);
@@ -66,8 +68,19 @@ const EstudianteApp = {
 
     // Indicadores académicos del estudiante
     document.getElementById("studentAttendance").textContent = `${studentData.attendanceRate}%`;
-    document.getElementById("studentRiskBadge").textContent = `Riesgo: ${studentData.riskLevel}`;
-    document.getElementById("studentRiskBadge").className = `badge-risk ${SharedApp.riskClass(studentData.riskLevel)}`;
+    const riskBadge = document.getElementById("studentRiskBadge");
+    const riskDetail = document.getElementById("studentRiskDetail");
+    const hasPending = studentData.preAlert && studentData.preAlert.status === "Pendiente";
+    if (hasPending && studentData.preAlert.safety) {
+      // Alerta de cuidado: nunca se muestra una etiqueta de riesgo al estudiante, sino acompañamiento
+      riskBadge.textContent = "Acompañamiento de Bienestar";
+      riskBadge.className = "badge-risk medio";
+      if (riskDetail) riskDetail.textContent = "El equipo de Bienestar se pondrá en contacto contigo.";
+    } else {
+      riskBadge.textContent = `Riesgo: ${studentData.riskLevel}`;
+      riskBadge.className = `badge-risk ${SharedApp.riskClass(studentData.riskLevel)}`;
+      if (riskDetail) riskDetail.textContent = hasPending ? "Tu tutor revisará tu caso de forma formativa." : "Sin alertas preventivas activas";
+    }
 
     // Cursos inscritos
     const coursesContainer = document.getElementById("studentCoursesList");
@@ -86,17 +99,71 @@ const EstudianteApp = {
         .join("");
     }
 
-    // Iniciar encuesta de bienestar
+    // Iniciar encuesta de bienestar: el sector depende del último que el estudiante completó
+    this.currentBattery = SurveyEngine.getNextBattery(studentData);
     this.surveyStep = 0;
     this.surveyAnswers = {}; // nunca se precargan respuestas antiguas: cada pulso es una respuesta nueva
+    this.renderSurveyHeader(studentData);
+    this.renderSupportNotice();
     this.renderSurveyStep();
+  },
+
+  /**
+   * Muestra el sector activo y el avance del ciclo de rotación (5 sectores)
+   */
+  renderSurveyHeader(studentData) {
+    const battery = this.currentBattery;
+    const chip = document.getElementById("surveySectorChip");
+    if (chip) {
+      chip.innerHTML = `<span class="sector-icon">${battery.icon}</span><span>${SharedApp.escapeHtml(battery.shortTitle)}</span>`;
+      chip.style.borderColor = battery.color;
+      chip.style.color = battery.color;
+      chip.title = battery.description;
+    }
+    const track = document.getElementById("surveyCycleTrack");
+    if (track) {
+      const { order, currentIndex, completedCycles } = SurveyEngine.getCycleProgress(studentData);
+      track.innerHTML =
+        order
+          .map((b, i) => {
+            const cls = i === currentIndex ? "current" : "";
+            const style = i === currentIndex ? `style="border-color:${b.color}; background:${b.color}22;"` : "";
+            return `<span class="cycle-dot ${cls}" ${style} title="${SharedApp.escapeHtml(b.shortTitle)}">${b.icon}</span>`;
+          })
+          .join("") +
+        `<span class="cycle-caption">Sector ${currentIndex + 1} de ${order.length}${completedCycles ? ` · ciclo ${completedCycles + 1}` : ""}</span>`;
+    }
+  },
+
+  /**
+   * Mensaje de acompañamiento si el ítem de cuidado marcó alerta en el último envío
+   */
+  renderSupportNotice() {
+    const box = document.getElementById("surveySupportNotice");
+    if (!box) return;
+    if (!this.showSupportNotice) {
+      box.classList.remove("active");
+      box.innerHTML = "";
+      return;
+    }
+    const r = ANCLA_DATA.supportResources;
+    box.innerHTML = `
+      <strong>💙 Estamos contigo</strong>
+      <p>${SharedApp.escapeHtml(r.message)}</p>
+      <p style="margin-top:6px;">Emergencias: <strong>${SharedApp.escapeHtml(r.emergencyLine)}</strong> · ${SharedApp.escapeHtml(r.campusService)}</p>
+      <button type="button" class="btn btn-secondary btn-sm" id="btnDismissSupport" style="margin-top:8px;">Entendido</button>`;
+    box.classList.add("active");
+    document.getElementById("btnDismissSupport").onclick = () => {
+      this.showSupportNotice = false;
+      this.renderSupportNotice();
+    };
   },
 
   /**
    * Renderiza el paso activo de la encuesta de bienestar estilo Typeform
    */
   renderSurveyStep() {
-    const questions = ANCLA_DATA.surveyQuestions;
+    const questions = this.currentBattery.questions;
     const q = questions[this.surveyStep];
     const total = questions.length;
 
@@ -181,7 +248,7 @@ const EstudianteApp = {
       return;
     }
 
-    const missing = ANCLA_DATA.surveyQuestions.findIndex((q) => !this.surveyAnswers[q.id]);
+    const missing = this.currentBattery.questions.findIndex((q) => !this.surveyAnswers[q.id]);
     if (missing !== -1) {
       SharedApp.showToast("Responde todas las preguntas antes de guardar.", "warning");
       this.surveyStep = missing;
@@ -190,9 +257,10 @@ const EstudianteApp = {
     }
 
     try {
-      await ApiService.submitPerceptions(studentUser.id, this.surveyAnswers);
-      SharedApp.showToast("¡Respuestas registradas! Tu bienestar es nuestra prioridad formativa.", "success");
-      this.renderStudentView();
+      const result = await ApiService.submitPerceptions(studentUser.id, this.surveyAnswers, this.currentBattery.id);
+      this.showSupportNotice = result.safetyFlag;
+      SharedApp.showToast(`¡Respuestas registradas! Próximo pulso: ${result.nextBattery.shortTitle}.`, "success");
+      this.renderStudentView(); // carga de inmediato las preguntas del siguiente sector
       SharedApp.updatePendingAlertsBadge();
     } catch (err) {
       SharedApp.showToast(

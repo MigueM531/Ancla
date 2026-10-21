@@ -39,7 +39,7 @@ const ApiService = {
       if (!accepted) {
         // Revocar implica dejar de conservar datos emocionales y recalcular solo con datos académicos
         const st = state.students.find(s => s.id === studentId);
-        if (st) { st.perceptions = null; RulesEngine.processPreAlert(st); }
+        if (st) { st.perceptions = null; st.surveyRotation = null; RulesEngine.processPreAlert(st); }
       }
       persistData(state);
     }
@@ -47,15 +47,20 @@ const ApiService = {
   },
 
   /**
-   * HU04: Ingesta de datos perceptuales / Encuesta Typeform de Bienestar
+   * HU04: Ingesta de datos perceptuales / Encuesta rotativa de Bienestar
+   *
+   * @param {string} studentId
+   * @param {Object} answers   { [idPregunta]: 1..5 } de UNA batería
+   * @param {string} [batteryId] sector respondido. Si se omite, `answers` se toma como puntajes ya agregados (modo heredado).
+   * @returns {{success, student, nextBattery, safetyFlag}}
    */
-  async submitPerceptions(studentId, perceptionsData) {
+  async submitPerceptions(studentId, answers, batteryId) {
     await this._simulateLatency();
     /* Conexión API real:
     const res = await fetch(`${this.BASE_URL}/students/${studentId}/perceptions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(perceptionsData)
+      body: JSON.stringify({ answers, batteryId })
     });
     return await res.json();
     */
@@ -64,18 +69,33 @@ const ApiService = {
       throw new Error("CONSENT_REQUIRED");
     }
     const student = state.students.find(s => s.id === studentId);
-    if (student) {
+    if (!student) throw new Error("Estudiante no encontrado");
+
+    const today = new Date().toISOString().split("T")[0];
+    let safetyFlag = false;
+
+    if (batteryId) {
+      const battery = SurveyEngine.getBatteryById(batteryId);
+      if (!battery) throw new Error("BATTERY_NOT_FOUND");
+      if (!SurveyEngine.validateAnswers(battery, answers).valid) throw new Error("INCOMPLETE_SURVEY");
+
+      const scoring = SurveyEngine.scoreBattery(battery, answers);
+      safetyFlag = scoring.safetyFlag;
       student.perceptions = {
         ...student.perceptions,
-        ...perceptionsData,
-        lastSurveyDate: new Date().toISOString().split("T")[0]
+        ...scoring.dimensions, // solo las dimensiones de este sector; el resto conserva su último valor
+        ...(scoring.hasSafetyItem ? { safetyFlag: scoring.safetyFlag } : {}),
+        lastSurveyDate: today
       };
-      // Ejecución determinista del motor de reglas ante nuevos datos
-      RulesEngine.processPreAlert(student);
-      persistData(state);
-      return { success: true, student };
+      SurveyEngine.recordCompletion(student, battery, scoring, today);
+    } else {
+      student.perceptions = { ...student.perceptions, ...answers, lastSurveyDate: today };
     }
-    throw new Error("Estudiante no encontrado");
+
+    // Ejecución determinista del motor de reglas ante nuevos datos
+    RulesEngine.processPreAlert(student);
+    persistData(state);
+    return { success: true, student, nextBattery: SurveyEngine.getNextBattery(student), safetyFlag };
   },
 
   /**
@@ -269,7 +289,7 @@ const ApiService = {
 // Permiso + auditoría para las operaciones sensibles
 const _AUDITED = {
   submitPrivacyConsent: { perm: "own_consent", msg: (a) => `Consentimiento informado ${a[1] ? "autorizado" : "revocado"} (HU01)` },
-  submitPerceptions: { perm: "survey", msg: () => "Micro-encuesta de bienestar registrada (HU04)" },
+  submitPerceptions: { perm: "survey", msg: (a) => `Micro-encuesta de bienestar registrada${a[2] ? " (sector: " + a[2] + ")" : ""} (HU04)` },
   validatePreAlert: { perm: "validate_alerts", msg: (a) => `Pre-alerta de ${a[0]} ${a[2] === "Validada" ? "validada" : "descartada"} (HU06)` }
 };
 Object.entries(_AUDITED).forEach(([name, cfg]) => {

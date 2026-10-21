@@ -62,6 +62,14 @@ const RulesEngine = {
         reasons.push(`Dificultades en integración universitaria (Adaptación: ${adaptationLevel}/5)`);
         trace.push({ type: "PERCEPTUAL_ADAPTATION", severity: "MEDIUM", detail: "Adaptación baja en primer año" });
       }
+
+      // Ítem de cuidado (encuesta emocional): siempre exige contacto humano prioritario.
+      // El texto es deliberadamente neutro: no expone el contenido de la respuesta a quien lea el panel.
+      if (student.perceptions.safetyFlag) {
+        riskScore += 70;
+        reasons.push("Señal de alerta prioritaria de bienestar: requiere contacto humano del equipo de Bienestar");
+        trace.push({ type: "PERCEPTUAL_SAFETY", severity: "CRITICAL", detail: "Ítem de cuidado en nivel de alerta" });
+      }
     }
 
     // 3. Determinación de Nivel de Riesgo Determinista
@@ -87,6 +95,7 @@ const RulesEngine = {
       riskLevel,
       triggerAlert,
       reason: reasons.length ? reasons.join(" • ") : "Indicadores dentro de los rangos esperados",
+      safety: !!(student.perceptions && student.perceptions.safetyFlag),
       trace
     };
   },
@@ -111,6 +120,7 @@ const RulesEngine = {
         ruleTriggered: ev.reason,
         riskScore: ev.riskScore,
         status: "Pendiente", // HU06: requiere supervisión humana obligatoria
+        safety: !!ev.safety, // las alertas de cuidado solo las cierra una persona, nunca el sistema
         tutorNotes: "",
         validatedBy: null,
         validationDate: null,
@@ -126,7 +136,7 @@ const RulesEngine = {
         pa.ruleTriggered = ev.reason;
         pa.riskScore = ev.riskScore;
       }
-    } else if (pa && pa.status === "Pendiente") {
+    } else if (pa && pa.status === "Pendiente" && !pa.safety) {
       // El estudiante se recuperó: se cierra la pre-alerta con trazabilidad
       pa.status = "Descartada";
       pa.tutorNotes = "Cerrada automáticamente: los indicadores volvieron a rangos esperados.";

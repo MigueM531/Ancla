@@ -168,9 +168,12 @@ const TutorApp = {
       // Poblar campos del modal
       document.getElementById("modalStudentName").textContent = `${student.name} (${student.program})`;
       document.getElementById("modalRuleDetails").textContent = student.preAlert.ruleTriggered;
+      const lastSector = student.surveyRotation && SurveyEngine.getBatteryById(student.surveyRotation.lastBatteryId);
       document.getElementById("modalAcademicStats").innerHTML = `
         <strong>Asistencia:</strong> ${student.attendanceRate}% | 
         <strong>Estrés reportado:</strong> ${student.perceptions ? student.perceptions.stressLevel + "/5" : "Sin datos (sin consentimiento)"}
+        ${lastSector ? `<br><strong>Último sector evaluado:</strong> ${SharedApp.escapeHtml(lastSector.shortTitle)}` : ""}
+        ${student.preAlert.safety ? `<br><strong style="color:var(--red-hover)">Prioridad de cuidado:</strong> contacta al estudiante personalmente y sigue el protocolo de Bienestar. Esta alerta solo puede cerrarla una persona.` : ""}
       `;
       document.getElementById("tutorNotesInput").value = student.preAlert.tutorNotes || "";
 

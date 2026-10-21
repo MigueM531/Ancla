@@ -51,6 +51,7 @@ Ancla/
     │
     ├── core/                    # Capa central de datos y motores de cálculo
     │   ├── data.js              # Semilla de datos estructurados y persistencia
+    │   ├── surveyEngine.js      # Rotación de sectores de la encuesta y puntuación por dimensión (HU04)
     │   ├── rulesEngine.js       # Motor determinista de reglas por umbrales (HU05)
     │   ├── financialSimulator.js# Motor de cálculo financiero de retención y ROI (HU09, HU10)
     │   └── apiService.js        # Servicio API con endpoints de login/logout y transacciones
@@ -114,6 +115,16 @@ Para conectar la base de datos Serverless en Neon:
    ```
 
 *Para más detalles y opciones de despliegue en la nube (Render, Railway, Docker), consulta la guía detallada en [NEON_SETUP.md](file:///c:/Users/Cristian%20Toro/Documents/Universidad%20de%20Medellín/26-2/Proyecto%20de%20Ingeniería%20I/Proyecto/Ancla/NEON_SETUP.md).*
+
+---
+
+## 🔄 Encuesta de bienestar rotativa (HU04)
+
+El banco tiene **25 preguntas en 5 sectores de 5** (ver [`docs/BANCO_PREGUNTAS.md`](docs/BANCO_PREGUNTAS.md)). Cuando un estudiante envía una batería, la siguiente encuesta cambia de inmediato al sector siguiente: Académico → Emocional → Social → Vocacional → Hábitos de vida → (reinicia). El orden se configura en `ANCLA_DATA.surveyRotation.order` (`js/core/data.js`).
+
+* Cada pregunta declara su `polarity` (`favorable`: 5 = mejor, `adverse`: 5 = peor) y la dimensión que alimenta en el motor de reglas.
+* Solo se guardan puntajes agregados por dimensión, no respuestas individuales; al revocar el consentimiento se borran junto con el historial de rotación.
+* El ítem de cuidado (`emot_hopelessness`) genera una alerta Crítica con texto neutro y muestra al estudiante un mensaje de apoyo. **Ajusta `ANCLA_DATA.supportResources` con las líneas oficiales de la institución.**
 
 ---
 

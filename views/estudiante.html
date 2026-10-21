@@ -110,7 +110,7 @@
               <div class="kpi-value" style="font-size: 1.3rem;">
                 <span class="badge-risk bajo" id="studentRiskBadge">Riesgo: Bajo</span>
               </div>
-              <div class="kpi-detail">Sin alertas preventivas activas</div>
+              <div class="kpi-detail" id="studentRiskDetail">Sin alertas preventivas activas</div>
             </div>
           </div>
 
@@ -121,10 +121,15 @@
                 <span>🔒</span>
                 <span>Encuesta inactiva: Debes autorizar el consentimiento ético arriba para habilitar el registro de percepciones.</span>
               </div>
+              <div class="survey-support-notice" id="surveySupportNotice" role="status"></div>
+              <div class="survey-sector-row">
+                <span class="survey-sector-chip" id="surveySectorChip"></span>
+                <span class="survey-cycle-track" id="surveyCycleTrack"></span>
+              </div>
               <div class="survey-progress-wrapper">
                 <div class="survey-step-indicator">
                   <span id="surveyQuestionNum">Paso 01</span>
-                  <span id="surveyStepIndicator">Pregunta 1 de 4</span>
+                  <span id="surveyStepIndicator">Pregunta 1 de 5</span>
                 </div>
                 <div class="survey-progress-bar">
                   <div class="survey-progress-fill" id="surveyProgressFill"></div>
@@ -196,6 +201,7 @@
 
   <!-- SCRIPTS MODULARES -->
   <script src="../js/core/data.js"></script>
+  <script src="../js/core/surveyEngine.js"></script>
   <script src="../js/core/rulesEngine.js"></script>
   <script src="../js/core/apiService.js"></script>
   <script src="../js/shared.js"></script>
